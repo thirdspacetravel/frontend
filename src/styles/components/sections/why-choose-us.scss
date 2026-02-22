@@ -1,0 +1,89 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.benefits-section {
+  width: 100%;
+  background-color: themify(bg-surface);
+
+  &__wrapper {
+    width: 100%;
+    max-width: 1280px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  &__header {
+    text-align: center;
+  }
+
+  &__title {
+    color: themify(text-main);
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__grid {
+    background: themify(bg-base);
+    padding: 60px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 40px;
+  }
+
+  .feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+
+    &__icon-bg {
+      width: 40px;
+      height: 40px;
+      background-color: themify(action-primary);
+      color: themify(text-action-primary);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &__title {
+      color: themify(text-main);
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    &__description {
+      color: themify(text-muted);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+
+  @include mq("xl-mobile") {
+    padding: 40px 16px;
+
+    &__grid {
+      padding: 30px 20px;
+      grid-template-columns: 1fr;
+    }
+  }
+}

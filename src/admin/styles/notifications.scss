@@ -1,0 +1,158 @@
+@use "sass:map";
+@use "../../styles/base/tokens" as *;
+@use "../../styles/base/breakpoints" as *;
+
+.tabs {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    column-gap: 16px;
+    row-gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+
+    &__text {
+        color: inherit;
+        font-size: 14px;
+        word-wrap: break-word;
+        transition: color 0.2s ease;
+
+        &--active {
+            color: themify(text-main);
+        }
+    }
+
+    &__item {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 8px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        background-color: themify(bg-base);
+        color: themify(text-muted);
+        border: 1px solid transparent;
+
+        &--active {
+            border-color: themify(focus-ring);
+        }
+
+        &:hover:not(&--active) {
+            color: themify(text-main) !important;
+        }
+    }
+
+}
+
+$icon-colors: (
+    "success": (bg: #28C76F, text: #FFFFFF),
+    "payment": (bg: #28C76F, text: #FFFFFF),
+    "enquiry": (bg: #EFF6FF, text: #3B82F6),
+    "warning": (bg: #FFB020, text: #1E1E1E),
+    "update": (bg: #F2F4F6, text: #9AA0A6),
+    "system": (bg: #EFF0F2, text: #0B1220)
+);
+
+
+.notification-list {
+    width: 100%;
+    border-radius: 16px;
+    background: themify(bg-base);
+    padding-bottom: 8px;
+
+    .notification {
+        display: flex;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 16px;
+        border-bottom: 1px solid themify(border-subtle);
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+
+        &__icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            flex-shrink: 0;
+
+            @each $name, $colors in $icon-colors {
+                &--#{$name} {
+                    background-color: map.get($colors, bg);
+                    color: map.get($colors, text);
+                }
+            }
+
+            @include mq("mobile") {
+                width: 28px;
+                height: 28px;
+                border-radius: 8px;
+
+                svg {
+                    width: 12px;
+                    height: 12px;
+                }
+            }
+        }
+
+        &__content {
+            width: 100%;
+        }
+
+        &__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        &__title {
+            color: themify(text-main);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        &__time {
+            color: themify(text-muted);
+            font-size: 12px;
+        }
+
+        &__message {
+            color: themify(text-muted);
+            font-size: 14px;
+            line-height: 21px;
+            margin-bottom: 6px;
+        }
+
+        &__text-dark-bold {
+            color: themify(text-main);
+            font-weight: 500;
+        }
+
+        &__text-light-bold {
+            color: themify(text-muted);
+            font-weight: 500;
+        }
+
+        &__indicator {
+            width: 6px;
+            height: 6px;
+            margin-top: 6px;
+            border-radius: 50%;
+            background-color: Color(red);
+            flex-shrink: 0;
+        }
+    }
+
+    .load-more {
+        margin: 12px auto;
+    }
+}

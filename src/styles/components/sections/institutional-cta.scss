@@ -1,0 +1,47 @@
+@use "sass:color";
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.inst-cta {
+  width: 100%;
+  background-color: themify(bg-surface);
+
+  &__container {
+    width: 100%;
+    max-width: 1280px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+
+    // Responsive: Stack vertically on smaller screens
+    @include mq("xl-mobile") {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 650px;
+  }
+
+  &__title {
+    margin: 0;
+    color: themify(text-main);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__description {
+    margin: 0;
+    color: themify(text-muted);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,261 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.booking-card {
+
+    &__container {
+        max-width: 1280px;
+        width: 100%;
+        display: flex;
+        gap: 32px;
+
+        @include mq("sm-tablet") {
+            flex-direction: column;
+        }
+    }
+
+    &__main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .tour-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            @include mq("xl-mobile") {
+                flex-direction: column;
+                align-items: start;
+                gap: 12px;
+            }
+
+            &__info {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            &__title {
+                margin: 0;
+                color: themify(text-main);
+                font-size: 32px;
+                font-weight: 600;
+                word-wrap: break-word;
+            }
+
+            &__details {
+                display: inline-flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 24px;
+                row-gap: 10px;
+                padding-right: 50px;
+            }
+
+            &__detail-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            &__icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 18px;
+                height: 18px;
+                color: themify(text-muted);
+            }
+
+            &__detail-text {
+                color: themify(text-main);
+                font-size: 14px;
+                font-weight: 400;
+                word-wrap: break-word;
+            }
+
+            &__features {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 6px 12px;
+                background: themify(bg-surface);
+                border-radius: 24px;
+            }
+
+            &__feature-text {
+                color: themify(text-muted);
+                font-size: 12px;
+                font-weight: 400;
+                word-wrap: break-word;
+            }
+        }
+    }
+
+    &__gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        img {
+            border-radius: 12px;
+            width: 100%;
+            object-fit: cover;
+            max-height: 300px;
+        }
+    }
+
+    &__thumbnails {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+
+        img {
+            max-height: 100px;
+        }
+    }
+
+    &__sidebar {
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        @include mq("sm-tablet") {
+            width: 100%;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+}
+
+.booking-sidebar {
+    border: 1.5px solid themify(border-subtle);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    &__pricing {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    &__amount {
+        font-size: 24px;
+        font-weight: 600;
+        display: block;
+    }
+
+    &__label,
+    &__guarantee {
+        font-size: 12px;
+        color: themify(text-muted);
+    }
+
+    &__summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        padding-top: 10px;
+    }
+
+    &__total-price {
+        font-weight: 600;
+
+        small {
+            font-weight: 400;
+        }
+    }
+}
+
+.booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &__row {
+        display: flex;
+        gap: 12px;
+    }
+
+    &__field {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+            font-size: 12px;
+            color: themify(text-muted);
+        }
+    }
+
+    &__input {
+        padding: 8px 10px;
+        border: 1.5px solid themify(border-subtle);
+        border-radius: 12px;
+        font-size: 13px;
+        width: 100%;
+        font-family: inherit;
+        color: inherit;
+        outline: none;
+        background-color: transparent;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+            border-color: themify(focus-ring);
+        }
+
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+            filter: invert(0.5);
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        // For Firefox
+        &[type='number'] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    }
+
+    &__input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .booking-form__input {
+            padding-right: 60px;
+        }
+    }
+
+    &__input-suffix {
+        position: absolute;
+        right: 12px;
+        font-size: 13px;
+        color: themify(text-muted);
+        pointer-events: none;
+    }
+}

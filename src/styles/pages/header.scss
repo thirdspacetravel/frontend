@@ -1,0 +1,193 @@
+@use "../base/tokens" as *;
+@use "../base/breakpoints" as *;
+
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header {
+    width: 100%;
+    z-index: 1000;
+    color: themify(nav-link);
+    border-bottom: 2px solid themify(border-subtle);
+
+    &__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 32px 40px;
+
+        @include mq("tablet") {
+            padding: 15px 20px;
+        }
+
+        .btn {
+            &.nav-toggle {
+                @include mq-min("tablet") {
+                    display: none;
+                }
+            }
+
+            &.u-hide-mobile {
+                @include mq("tablet") {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &__logo {
+        cursor: pointer;
+
+        .logo-text {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+    }
+
+    &__desktop-nav {
+        @include mq("tablet") {
+            display: none;
+        }
+
+        .nav-desktop__list {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-desktop__link {
+            font-size: 13px;
+            font-weight: 400;
+            text-decoration: none;
+            text-transform: uppercase;
+            color: themify(nav-link);
+            transition: $transition;
+
+            &.active {
+                font-weight: 600;
+            }
+        }
+    }
+
+    &__actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn.nav-toggle {
+        padding: 8px;
+    }
+
+    &.fixed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #FFFFFF;
+        border-bottom: 0px;
+
+        .nav-desktop__link {
+            color: #F1F1F1;
+
+            &:hover,
+            &.active {
+                color: #FFFFFF;
+            }
+        }
+
+        .header__container .btn {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    .filter-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 998;
+        background: rgba(0, 0, 0, 0.5);
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+
+        &.is-hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 100%;
+        height: 100%;
+        padding: 80px 40px;
+        background: themify(bg-base);
+        color: themify(nav-link);
+        transform: translateX(100%);
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &.is-open {
+            transform: translateX(0);
+        }
+
+        @include mq("mobile") {
+            padding: 40px;
+        }
+
+        &__header {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+
+            .nav-toggle {
+                border: 0;
+            }
+        }
+
+        &__content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .nav-mobile {
+            &__list {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                list-style: none;
+                margin-top: 50px;
+            }
+
+            &__link {
+                font-size: 32px;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-weight: 400;
+                opacity: 0.5;
+                transition: $transition;
+
+                &.active,
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

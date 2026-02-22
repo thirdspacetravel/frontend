@@ -1,0 +1,139 @@
+@use "../../styles/base/tokens" as *;
+@use "../../styles/base/breakpoints" as *;
+
+$transition: all 0.2s ease;
+$box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
+
+.dashboard-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+
+    @include mq("mobile") {
+        flex-direction: column;
+    }
+
+    &__search-wrapper {
+        position: relative;
+        flex: 1;
+        width: 100%;
+        display: flex;
+        background-color: themify(bg-base);
+        padding: 3px 16px;
+        border-radius: 12px;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        box-shadow: $box-shadow;
+
+        @include mq-min("mobile") {
+            max-width: 300px;
+        }
+    }
+
+    &__search-icon {
+        color: themify(text-muted);
+        pointer-events: none;
+    }
+
+    &__search-input {
+        flex: 1;
+        height: 36px;
+        font-size: 14px;
+        outline: none;
+
+        &::placeholder {
+            color: themify(text-muted);
+        }
+    }
+
+    &__filters {
+        display: flex;
+        gap: 12px;
+
+        @include mq("mobile") {
+            width: 100%;
+        }
+    }
+
+    &__filter-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 16px;
+        background-color: themify(bg-base);
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 400;
+        color: themify(text-main);
+        cursor: pointer;
+        transition: $transition;
+        box-shadow: $box-shadow;
+    }
+}
+
+.action-menu {
+    max-width: 200px;
+    background: themify(bg-base);
+    border-radius: 16px;
+    padding: 4px;
+    box-shadow: $box-shadow;
+
+    &__header {
+        padding: 8px 12px 4px 12px;
+    }
+
+    &__title {
+        color: themify(text-muted);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 8px;
+        font-size: 14px;
+        color: themify(text-main);
+        text-align: left;
+        transition: all 0.2s;
+
+        svg {
+            flex-shrink: 0;
+        }
+
+        &:hover {
+            background-color: themify(bg-translucent-2);
+        }
+
+        &--danger {
+            color: Color(red);
+
+            &:hover {
+                background-color: #FEF2F2;
+            }
+        }
+    }
+
+    &__divider {
+        height: 1px;
+        border: none;
+        background-color: themify(border-subtle);
+        margin: 4px 0;
+    }
+}

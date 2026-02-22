@@ -1,0 +1,128 @@
+@use "sass:color";
+@use "../base/tokens" as *;
+@use "../base/breakpoints" as *;
+
+.footer {
+  background-color: themify(bg-footer);
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__container {
+    width: 100%;
+    max-width: 1280px;
+    padding: 0 24px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    gap: 80px;
+
+    @media (max-width: 480px) {
+      gap: 40px;
+    }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__heading {
+    margin: 0;
+    color: themify(text-footer-heading);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__link {
+    color: themify(text-footer-link);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: themify(text-on-main);
+    }
+  }
+
+  &__newsletter {
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__text {
+    color: themify(text-footer-link);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: 1.5px solid themify(border-subtle-on-main);
+    border-radius: 12px;
+    padding: 4px;
+    transition: border-color 0.2s;
+
+    &:focus-within {
+      border-color: themify(focus-ring-on-main);
+    }
+  }
+
+  &__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 10px 12px;
+    color: themify(text-on-main);
+    font-size: 14px;
+    outline: none;
+
+    &::placeholder {
+      color: themify(text-placeholder);
+    }
+  }
+
+  &__bottom {
+    width: 100%;
+    border-top: 1.5px solid themify(border-subtle);
+    display: flex;
+    justify-content: center;
+    padding: 32px 24px;
+  }
+
+  &__bottom-container {
+    width: 100%;
+    max-width: 1280px;
+  }
+
+  &__copyright {
+    color: themify(text-copyright);
+    font-size: 14px;
+  }
+}

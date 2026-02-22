@@ -1,0 +1,33 @@
+@use "sass:map";
+$breakpoints: (
+    "sm-mobile": 400px,
+    "mobile": 600px,
+    "xl-mobile": 768px,
+    "sm-tablet": 1000px,
+    "tablet": 1100px,
+    "desktop": 1440px
+);
+
+@mixin mq($canvas) {
+    @if map.has-key($breakpoints, $canvas) {
+        @media (max-width: map.get($breakpoints, $canvas)) {
+            @content;
+        }
+    }
+
+    @else {
+        @warn "Unknown breakpoint: #{$canvas}.";
+    }
+}
+
+@mixin mq-min($canvas) {
+    @if map.has-key($breakpoints, $canvas) {
+        @media (min-width: map.get($breakpoints, $canvas)) {
+            @content;
+        }
+    }
+
+    @else {
+        @warn "Unknown breakpoint: #{$canvas}.";
+    }
+}

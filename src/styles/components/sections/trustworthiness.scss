@@ -1,0 +1,90 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.trust-banner {
+  background-color: themify(bg-surface);
+
+  &__container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 60px;
+    max-width: 1280px;
+    width: 100%;
+
+    @include mq("tablet") {
+      flex-direction: column;
+      gap: 40px;
+    }
+  }
+
+  &__image-wrapper {
+    flex: 1;
+    width: 100%;
+  }
+
+  &__image {
+    width: 100%;
+    height: auto;
+    max-height: 458px;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  &__title {
+    margin: 0 0 16px 0;
+    color: themify(text-main);
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  &__description {
+    margin: 0;
+    color: themify(text-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  &__feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__feature-text {
+    color: themify(text-main);
+    font-size: 16px;
+    font-weight: 400;
+  }
+}

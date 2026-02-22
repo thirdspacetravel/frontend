@@ -1,0 +1,87 @@
+@use "../../styles/base/tokens" as *;
+@use "../../styles/base/breakpoints" as *;
+$box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+
+    @include mq-min("tablet") {
+        grid-template-columns: 2fr 1fr;
+    }
+
+    &__side {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+
+        @include mq("tablet") {
+            flex-direction: row;
+        }
+
+        @include mq("mobile") {
+            flex-direction: column;
+        }
+
+        .side-list {
+            list-style: none;
+
+            &__item {
+                display: flex;
+                align-items: center;
+                padding: 16px 24px;
+                border-bottom: 1px solid themify(border-subtle);
+                gap: 12px;
+                cursor: pointer;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                &--simple {
+                    justify-content: space-between;
+                }
+
+                &:hover {
+                    background-color: themify(bg-translucent-2);
+                }
+            }
+
+            &__icon-box {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: themify(bg-surface);
+            }
+
+            &__content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            &__title {
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            &__meta {
+                font-size: 13px;
+                color: themify(text-muted);
+            }
+        }
+
+        .badge-new {
+            font-size: 10px;
+            font-weight: 500;
+            background: themify(bg-surface);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: themify(text-placeholder);
+        }
+    }
+}

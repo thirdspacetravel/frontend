@@ -1,0 +1,7 @@
+@function Color($key) {
+    @return var(--color-#{$key});
+}
+
+@function themify($key) {
+    @return var(--theme-#{$key});
+}

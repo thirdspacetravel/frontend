@@ -1,0 +1,42 @@
+$theme: (
+  // --- Backgrounds ---
+  bg-base: #121212,
+  // Deepest layer
+  bg-surface: #1e1e1e,
+  // Slightly lighter for contrast
+  bg-card: #2a2a2a,
+  // Elevated surface
+  bg-footer: #0a0a0a,
+  // Often darker or true black
+
+  // --- Content (Text & Icons) ---
+  text-main: #ffffff,
+  text-muted: #a1a1aa,
+  text-placeholder: #71717a,
+  text-on-main: #000000,
+  text-footer-heading: #ffffff,
+  text-footer-link: #d4d4d8,
+  text-copyright: #a1a1aa,
+
+  // --- Interactive & States ---
+  action-primary: #ffffff,
+  // High contrast action
+  action-primary-hover: #e4e4e7,
+  action-on-primary: #000000,
+  action-outline: rgba(255, 255, 255, 0.3),
+  action-outline-on-primary: rgba(0, 0, 0, 0.3),
+  text-action-primary: #000000,
+  text-action-on-primary: #ffffff,
+
+  // --- Borders & Dividers ---
+  border-subtle: rgba(255, 255, 255, 0.1),
+  border-subtle-on-main: rgba(0, 0, 0, 0.2),
+  border-strong: rgba(255, 255, 255, 0.4),
+  divider: #27272a,
+  focus-ring: rgba(255, 255, 255, 0.5),
+  focus-ring-on-main: rgba(0, 0, 0, 0.5),
+
+  // --- Component Specific ---
+  badge-bg: #27272a,
+  nav-link: #ffffff,
+);

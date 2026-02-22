@@ -1,0 +1,110 @@
+@use "../base/tokens" as *;
+@use "../base/breakpoints" as *;
+
+.policy-wrapper {
+    max-width: 1280px;
+
+    .policy-header {
+        text-align: center;
+        padding-bottom: 40px;
+        border-bottom: 1px solid themify(border-subtle);
+        margin-bottom: 40px;
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .last-updated {
+            color: themify(text-muted);
+            font-size: 14px;
+        }
+    }
+
+    .policy-section {
+        margin-bottom: 48px;
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: themify(text-muted);
+            margin-bottom: 16px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 24px 0;
+
+            .cancellation-table {
+                width: 100%;
+                border-collapse: collapse;
+
+                th,
+                td {
+                    padding: 16px 20px;
+                    text-align: left;
+                    border-bottom: 1px solid themify(border-subtle);
+                }
+
+                th {
+                    background: themify(bg-surface);
+                    font-weight: 600;
+                    font-size: 15px;
+                }
+
+                td {
+                    color: themify(text-muted);
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .note {
+            background: themify(bg-surface);
+            padding: 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .policy-list {
+            padding-left: 20px;
+            color: themify(text-muted);
+
+            li {
+                margin-bottom: 12px;
+                line-height: 1.6;
+
+                strong {
+                    color: themify(text-main);
+                }
+            }
+        }
+
+        &.contact-box {
+            background: themify(bg-surface);
+            padding: 30px;
+            border-radius: 12px;
+
+            .contact-details {
+                margin-top: 16px;
+
+                p {
+                    color: themify(text-main);
+                    margin-bottom: 8px;
+                }
+
+                strong {
+                    margin-right: 8px;
+                }
+            }
+        }
+    }
+
+}

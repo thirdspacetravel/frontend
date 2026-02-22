@@ -1,0 +1,59 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.cta-section {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px 40px;
+  width: 100%;
+
+  .cta-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+
+    width: 100%;
+    max-width: 800px;
+    padding: 60px 20px;
+
+    background-color: themify(bg-card);
+    border-radius: 20px;
+    text-align: center;
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 640px;
+    }
+
+    &__title {
+      margin: 0;
+      color: themify(text-on-main);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    &__description {
+      margin: 0;
+      color: themify(text-muted);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    @include mq("mobile") {
+      padding: 40px 16px;
+
+      &__title {
+        font-size: 28px;
+      }
+
+      &__description {
+        font-size: 16px;
+      }
+    }
+  }
+}

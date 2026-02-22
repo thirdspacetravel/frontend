@@ -1,0 +1,99 @@
+@use "sass:color";
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.faq-section {
+  .faq-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    &__title {
+      color: themify(text-main);
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .faq-list {
+      width: 100%;
+
+      .faq-item {
+        border-bottom: 1px solid themify(border-subtle);
+        padding: 12px 0;
+        overflow: hidden;
+
+        &__header {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: none;
+          border: none;
+          padding: 12px 0;
+          cursor: pointer;
+          text-align: left;
+          outline: none;
+
+          &:hover .faq-item__question {
+            opacity: 0.9;
+          }
+        }
+
+        &__question {
+          color: themify(text-main);
+          font-size: 18px;
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+
+        &__icon-wrapper {
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        &__icon {
+          color: themify(text-muted);
+          transition: transform 0.3s ease;
+        }
+
+        &__content {
+          max-height: 0;
+          opacity: 0;
+          transition: all 0.3s ease-in-out;
+          pointer-events: none;
+        }
+
+        &__answer {
+          color: themify(text-muted);
+          font-size: 15px;
+          font-weight: 400;
+          line-height: 1.6;
+          padding-bottom: 12px;
+          margin: 0;
+        }
+
+        // Active State Modifiers
+        &--active {
+          .faq-item__content {
+            max-height: 200px; // Arbitrary height for animation
+            opacity: 1;
+            pointer-events: auto;
+            padding-top: 8px;
+          }
+
+          .faq-item__icon {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }
+}

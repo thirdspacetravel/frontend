@@ -1,0 +1,61 @@
+@use "../../styles/base/tokens" as *;
+@use "../../styles/base/breakpoints" as *;
+
+$box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    width: 100%;
+    margin-bottom: 24px;
+
+    .stat-card {
+        padding: 24px;
+        border-radius: 16px;
+        background-color: themify(bg-base);
+        box-shadow: $box-shadow;
+        color: themify(text-muted);
+        font-size: 12px;
+
+        &__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        &__icon-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        &__value {
+            color: themify(text-main);
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        &__trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+
+            &--up {
+                background: themify(bg-card);
+                padding: 2px 8px;
+                border-radius: 4px;
+                color: themify(text-on-main);
+            }
+        }
+
+        &__trend-text {
+            font-weight: 400;
+        }
+
+        &__trend-icon {
+            flex-shrink: 0;
+        }
+    }
+}

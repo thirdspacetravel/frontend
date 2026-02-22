@@ -1,0 +1,45 @@
+@use "../../styles/base/tokens" as *;
+@use "../../styles/base/breakpoints" as *;
+$box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
+
+.login-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: themify(bg-surface);
+
+    .login-card {
+        width: 100%;
+        max-width: 375px;
+        padding: 32px 24px;
+        background: themify(bg-base);
+        border-radius: 16px;
+        box-shadow: $box-shadow;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        h1 {
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: themify(text-main);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 10px;
+        }
+    }
+
+    @include mq("mobile") {
+        .login-card {
+            max-width: 100%;
+            height: 100%;
+            justify-content: center;
+        }
+    }
+}

@@ -1,0 +1,133 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+$color-accent: #333333;
+
+.contact-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 810px;
+  padding: 40px 20px;
+
+  &__container {
+    display: flex;
+    flex-direction: row;
+    gap: 64px;
+    max-width: 1280px;
+    width: 100%;
+
+    @include mq("tablet") {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contact-card {
+      display: flex;
+      gap: 16px;
+      padding: 32px;
+      background: themify(bg-surface);
+      border-radius: 16px;
+      transition: transform 0.2s;
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      &__icon-wrapper {
+        width: 48px;
+        height: 48px;
+        background: #f6f7f8;
+        border-radius: 50%;
+        box-shadow: 0px 0px 40px 4px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+          width: 24px;
+          height: 24px;
+          color: themify(text-muted);
+        }
+      }
+
+      &__content {
+        flex: 1;
+        width: 100%;
+        display: grid;
+      }
+
+      &__label {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: themify(text-muted);
+      }
+
+      &__value {
+        font-size: 20px;
+        font-weight: 600;
+        color: themify(text-main);
+        margin: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      &__action {
+        background: none;
+        border: none;
+        padding: 4px 0 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: themify(action-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .enquiry-form {
+      width: 100%;
+      max-width: 576px;
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid themify(border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      @include mq("mobile") {
+        padding: 40px 20px;
+      }
+
+      &__header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      &__title {
+        font-size: 24px;
+        font-weight: 600;
+        color: themify(text-main);
+        margin: 0;
+      }
+
+      &__subtitle {
+        font-size: 15px;
+        color: themify(text-muted);
+        margin: 0;
+      }
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+    width: 100%;
+  }
+}
