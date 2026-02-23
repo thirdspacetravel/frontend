@@ -7,7 +7,7 @@ export const trpc = createTRPCReact<AppRouter>();
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "https://api.thirdspacetravel.com/trpc",
+      url: `${import.meta.env.VITE_API_URL}/trpc`,
       fetch(url, options) {
         return fetch(url, {
           ...options,

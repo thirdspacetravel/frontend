@@ -3,18 +3,21 @@ import { Navigate, Outlet } from "react-router";
 import { trpc } from "../../trpc";
 
 const AdminAuthGuard: React.FC = () => {
-  const { data, isLoading, isError } = trpc.adminAuth.check.useQuery(
+  const { data, isLoading, isError } = trpc.adminAuth.checkStatus.useQuery(
     undefined,
     {
       retry: false,
-      retryOnMount: false,
+      refetchOnWindowFocus: false,
     },
   );
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <p>Verifying Admin Session...</p>
+      </div>
+    );
   }
-  if (isError || !data) {
+  if (isError || !data?.authenticated) {
     return <Navigate to="/admin/login" replace />;
   }
   return <Outlet />;

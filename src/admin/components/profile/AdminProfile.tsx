@@ -5,7 +5,7 @@ import NotificationPreferences from "./NotificationPreferences";
 import InviteTeamMemberForm from "./InviteTeamMemberForm";
 import { trpc } from "../../../trpc/index";
 const ProfileContent = () => {
-  const adminQuery = trpc.adminAuth.getAdminDetails.useQuery();
+  const adminQuery = trpc.admin.getMe.useQuery();
 
   if (adminQuery.isLoading) {
     return <div>Loading admin details...</div>;

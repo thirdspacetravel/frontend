@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <>
       <HeroSection
-        title="Curated Group Trips from Chandigarh. Space to Pause. Time to Connect."
+        title="Curated Group Trips. Space to Pause. Time to Connect."
         subtitle="The pause between routine and responsibility."
         imageSrc="./herosection/herosection1.jpg"
       />
