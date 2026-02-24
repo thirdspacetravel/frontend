@@ -43,9 +43,8 @@ const transformTrip = (trip: TripRecord): TripData => {
   ): string => {
     if (!start || !end) return "Dates TBD";
     const s = new Date(start);
-    const e = new Date(end);
     const month = s.toLocaleString("en-US", { month: "short" });
-    return `${month} ${s.getDate()}-${e.getDate()}`;
+    return `${month} ${s.getDate()}`;
   };
 
   const images = trip.images;
@@ -54,7 +53,7 @@ const transformTrip = (trip: TripRecord): TripData => {
   return {
     id: trip.id,
     title: trip.tripName,
-    image: images
+    image: images[0]
       ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
       : "https://placehold.co/363x240",
     badge: trip.isFeatured ? "Featured" : "Winter Special",

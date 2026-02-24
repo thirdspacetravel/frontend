@@ -2,43 +2,73 @@ import React from "react";
 import { useNavigate } from "react-router";
 import ArrowRight from "../../icons/ArrowRightIcon";
 import Button from "../utils/Button";
-import TripCard from "../cards/TripCard";
+import TripCard, { type TripData } from "../cards/TripCard";
+import type { DayData } from "../../admin/components/trips/types";
+import { trpc } from "../../trpc";
+interface TripRecord {
+  id: string;
+  tripName: string;
+  destination: string;
+  tripType?: number | null;
+  fullOverview: string;
+  days?: number | null;
+  nights?: number | null;
+  totalSeats?: number | null;
+  pickupLocation: string;
+  dropOffLocation: string;
+  inclusions: string;
+  exclusions: string;
+  itinerary: DayData[];
+  status: number;
+  isFeatured: boolean;
+  isAcceptingBookings: boolean;
+  categories: string[];
+  priceQuad?: number | null;
+  priceTriple?: number | null;
+  priceDouble?: number | null;
+  startDateTime?: Date | string | null;
+  endDateTime?: Date | string | null;
+  images: string[];
+}
 
-const TRIPS = [
-  {
-    id: "1",
-    title: "Manali Leisure",
-    image: "https://placehold.co/363x240",
-    badge: "Best Seller",
-    date: "Apr 12-15",
-    duration: "4D/3N",
-    tags: ["Stay", "Meals", "Trek", "Transport"],
-    price: "8,499",
-  },
-  {
-    id: "2",
-    title: "Goa Unwind",
-    image: "https://placehold.co/363x240",
-    badge: "Relaxing",
-    date: "May 05-08",
-    duration: "4D/3N",
-    tags: ["Villa Stay", "Breakfast", "Yoga", "Scooter"],
-    price: "12,999",
-  },
-  {
-    id: "3",
-    title: "Gokarna Beach Trek",
-    image: "https://placehold.co/363x240",
-    badge: "Adventure",
-    date: "Apr 20-22",
-    duration: "3D/2N",
-    tags: ["Camping", "Bonfire", "Guide", "Meals"],
-    price: "5,999",
-  },
-];
+const transformTrip = (trip: TripRecord): TripData => {
+  // Helper to format date range: "Apr 12-15"
+  const formatDateRange = (
+    start?: Date | string | null,
+    end?: Date | string | null,
+  ): string => {
+    if (!start || !end) return "Dates TBD";
+    const s = new Date(start);
+    const month = s.toLocaleString("en-US", { month: "short" });
+    return `${month} ${s.getDate()}`;
+  };
 
+  const images = trip.images;
+  const categories = trip.categories;
+
+  return {
+    id: trip.id,
+    title: trip.tripName,
+    image: images[0]
+      ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
+      : "https://placehold.co/363x240",
+    badge: trip.isFeatured ? "Featured" : "Winter Special",
+    date: formatDateRange(trip.startDateTime, trip.endDateTime),
+    duration:
+      trip.days && trip.nights ? `${trip.days}D/${trip.nights}N` : "TBD",
+    tags: categories.length > 0 ? categories : ["Adventure"],
+    price: trip.priceQuad ? trip.priceQuad.toLocaleString() : "0",
+  };
+};
 const TripsSection: React.FC = () => {
   const navigate = useNavigate();
+  const { data: TRIPS = [], isLoading } = trpc.public.fetchTrips.useQuery(
+    undefined,
+    {
+      select: (data) => data.map(transformTrip),
+    },
+  );
+  if (isLoading) return <div></div>;
   return (
     <section className="trips-section">
       <div className="trips-section__container">
