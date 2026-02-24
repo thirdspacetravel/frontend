@@ -1,16 +1,20 @@
-import { useState } from "react";
 import {
   CustomDropdown,
   TextInput,
   TextArea,
 } from "../../../components/utils/InputUtils";
-const TripPreviewCard = () => {
+import type { TripDetails } from "./types";
+const TripPreviewCard = ({
+  onChange,
+  tripData,
+}: {
+  onChange: (label: keyof TripDetails, value: string | number | null) => void;
+  tripData: TripDetails;
+}) => {
   const tripTypeOptions = [
     { label: "Group Trip", value: 1 },
     { label: "Private Trip", value: 2 },
-    { label: "Customized", value: 3 },
   ];
-  const [selectedTripType, setSelectedTripType] = useState<number | null>(null);
   return (
     <div className="content-canvas__card">
       <header className="content-canvas__header">
@@ -27,6 +31,8 @@ const TripPreviewCard = () => {
           label="Trip Name"
           id="tripName"
           placeholder="e.g. Spiti Valley Winter Expedition"
+          value={tripData.tripName}
+          onChange={(e) => onChange("tripName", e.target.value)}
         />
 
         <div className="content-canvas__row col-2">
@@ -34,30 +40,27 @@ const TripPreviewCard = () => {
             label="Destination"
             id="destination"
             placeholder="e.g. Kaza, Himachal Pradesh"
+            value={tripData.destination}
+            onChange={(e) => onChange("destination", e.target.value)}
           />
 
           <div className="input__field">
             <label>Trip Type</label>
             <CustomDropdown
               options={tripTypeOptions}
-              value={selectedTripType}
-              onSelect={(val) => setSelectedTripType(val)}
+              value={tripData.tripType}
+              onSelect={(val) => onChange("tripType", val)}
               placeholder="Select Trip Type"
             />
           </div>
         </div>
-
-        <TextArea
-          label="Short Description (for cards)"
-          id="shortDesc"
-          className="content-canvas__textarea--short"
-          placeholder="Brief summary used in trip cards..."
-        />
         <TextArea
           label="Full Overview"
           id="fullOverview"
           className="content-canvas__textarea--long"
           placeholder="Detailed trip description..."
+          value={tripData.fullOverview}
+          onChange={(e) => onChange("fullOverview", e.target.value)}
           rows={5}
         />
       </div>

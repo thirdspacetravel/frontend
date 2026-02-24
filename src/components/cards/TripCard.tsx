@@ -4,7 +4,7 @@ import ClockIcon from "../../icons/ClockIcon";
 import Button from "../utils/Button";
 
 export interface TripData {
-  id: number;
+  id: string;
   title: string;
   image: string;
   badge: string;

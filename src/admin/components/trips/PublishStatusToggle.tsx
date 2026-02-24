@@ -1,14 +1,17 @@
-import React, { useState } from "react";
 import { CustomDropdown } from "../../../components/utils/InputUtils";
 import { Switch } from "../../../components/utils/InputUtils";
+import type { OnChangeHandler, TripDetails } from "./types";
 
-const PublishStatusToggle: React.FC = () => {
-  const [isFeatured, setIsFeatured] = useState(true);
-  const [isAcceptingBookings, setIsAcceptingBookings] = useState(false);
+const PublishStatusToggle = ({
+  onChange,
+  tripData,
+}: {
+  onChange: OnChangeHandler;
+  tripData: TripDetails;
+}) => {
   const statusOptions = [
-    { label: "Draft", value: 0 },
-    { label: "Active", value: 1 },
-    { label: "Sold Out", value: 2 },
+    { label: "Draft", value: 1 },
+    { label: "Active", value: 2 },
     { label: "Completed", value: 3 },
   ];
   return (
@@ -21,15 +24,15 @@ const PublishStatusToggle: React.FC = () => {
           <label>Status</label>
           <CustomDropdown
             options={statusOptions}
-            onSelect={(val) => console.log("Status changed to:", val)}
+            value={tripData.status}
+            onSelect={(val) => onChange("status", val)}
           />
         </div>
         <div className="content-canvas__toggle-row">
           <Switch
-            initialValue={isFeatured}
+            initialValue={tripData.isFeatured}
             onChange={async (nextState) => {
-              console.log("Featured toggle:", nextState);
-              setIsFeatured(nextState);
+              onChange("isFeatured", nextState);
               return true;
             }}
           />
@@ -37,10 +40,9 @@ const PublishStatusToggle: React.FC = () => {
         </div>
         <div className="content-canvas__toggle-row">
           <Switch
-            initialValue={isAcceptingBookings}
+            initialValue={tripData.isAcceptingBookings}
             onChange={(nextState) => {
-              console.log("Accepting bookings toggle:", nextState);
-              setIsAcceptingBookings(nextState);
+              onChange("isAcceptingBookings", nextState);
               return true;
             }}
           />

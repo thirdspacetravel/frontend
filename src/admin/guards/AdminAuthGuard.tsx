@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router";
 import { trpc } from "../../trpc";
+import Spinner from "../../components/utils/Spinner";
 
 const AdminAuthGuard: React.FC = () => {
   const { data, isLoading, isError } = trpc.adminAuth.checkStatus.useQuery(
@@ -12,8 +13,13 @@ const AdminAuthGuard: React.FC = () => {
   );
   if (isLoading) {
     return (
-      <div>
-        <p>Verifying Admin Session...</p>
+      <div className="auth-guard-container">
+        <Spinner
+          size={50}
+          color="#333"
+          trackColor="rgba(51, 51, 51, 0.3)"
+          strokeWidth={2}
+        />
       </div>
     );
   }

@@ -43,22 +43,19 @@ export const PrefixInput: React.FC<PrefixInputProps> = ({
 
 interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  minValue?: number;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   label,
   id,
+  minValue = 2,
   ...props
 }) => {
   return (
     <div className="input__field">
       <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="number"
-        min={2} // Ensures the value cannot go below zero
-        {...props}
-      />
+      <input id={id} type="number" min={minValue} {...props} />
     </div>
   );
 };

@@ -1,7 +1,13 @@
-import React from "react";
 import { TextArea } from "../../../components/utils/InputUtils";
+import type { OnChangeHandler, TripDetails } from "./types";
 
-const InclusionsExclusionsList: React.FC = () => {
+const InclusionsExclusionsList = ({
+  onChange,
+  tripData,
+}: {
+  onChange: OnChangeHandler;
+  tripData: TripDetails;
+}) => {
   return (
     <div className="content-canvas__card">
       <header className="content-canvas__header">
@@ -13,7 +19,8 @@ const InclusionsExclusionsList: React.FC = () => {
           label="Inclusions (One per line)"
           id="inclusions"
           placeholder="e.g. Tempo Traveler Transport"
-          defaultValue={`Tempo Traveler Transport\nBreakfast & Dinner\nOxygen Cylinders\nTrip Coordinator`}
+          defaultValue={tripData.inclusions === null ? "" : tripData.inclusions}
+          onChange={(e) => onChange("inclusions", e.target.value)}
           rows={5}
         />
 
@@ -21,7 +28,8 @@ const InclusionsExclusionsList: React.FC = () => {
           label="Exclusions (One per line)"
           id="exclusions"
           placeholder="e.g. Lunch on all days"
-          defaultValue={`Lunch on all days\nPersonal expenses\nEntry tickets`}
+          defaultValue={tripData.exclusions === null ? "" : tripData.exclusions}
+          onChange={(e) => onChange("exclusions", e.target.value)}
           rows={4}
         />
       </div>

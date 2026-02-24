@@ -1,7 +1,13 @@
-import React from "react";
-import { PrefixInput, TextInput } from "../../../components/utils/InputUtils";
+import { TextInput } from "../../../components/utils/InputUtils";
+import type { OnChangeHandler, TripDetails } from "./types";
 
-const PricingDatesForm: React.FC = () => {
+const PricingDatesForm = ({
+  tripData,
+  onChange,
+}: {
+  tripData: TripDetails;
+  onChange: OnChangeHandler;
+}) => {
   return (
     <aside className="content-canvas__card">
       <header className="content-canvas__header">
@@ -9,38 +15,33 @@ const PricingDatesForm: React.FC = () => {
       </header>
 
       <div className="content-canvas__body">
-        {/* Price Input */}
-        <PrefixInput
-          label="Price per person"
-          id="price"
-          prefix="₹"
-          type="number"
-          defaultValue="18500"
-        />
-
-        {/* Compare at Price */}
-        <PrefixInput
-          label="Compare at Price"
-          id="compare-price"
-          prefix="₹"
-          type="number"
-          defaultValue="22000"
-        />
-
-        {/* Start Date */}
         <TextInput
           label="Start Date"
           id="start-date"
           type="date"
-          defaultValue="2024-02-15"
+          value={tripData.startDate || ""}
+          onChange={(e) => onChange("startDate", e.target.value)}
         />
-
-        {/* End Date */}
+        <TextInput
+          label="Start Time"
+          id="start-time"
+          type="time"
+          value={tripData.startTime || ""}
+          onChange={(e) => onChange("startTime", e.target.value)}
+        />
         <TextInput
           label="End Date"
           id="end-date"
           type="date"
-          defaultValue="2024-02-21"
+          value={tripData.endDate || ""}
+          onChange={(e) => onChange("endDate", e.target.value)}
+        />
+        <TextInput
+          label="End Time"
+          id="end-time"
+          type="time"
+          value={tripData.endTime || ""}
+          onChange={(e) => onChange("endTime", e.target.value)}
         />
       </div>
     </aside>

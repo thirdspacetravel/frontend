@@ -1,37 +1,38 @@
-import React, { useState } from "react";
 import CloseIcon from "../../../icons/CloseIcon";
 import { TextInput } from "../../../components/utils/InputUtils";
 import Button from "../../../components/utils/Button";
-const TripCategorySelector: React.FC = () => {
-  const [categories, setCategories] = useState([
-    { id: "weekend", label: "Weekend Gateway", checked: false },
-    { id: "trekking", label: "Trekking", checked: false },
-    { id: "cultural", label: "Cultural", checked: false },
-    { id: "backpacking", label: "Backpacking", checked: false },
-  ]);
+import type { OnChangeHandler } from "./types";
+import { useState } from "react";
 
+const TripCategorySelector = ({
+  onChange,
+  categories,
+}: {
+  onChange: OnChangeHandler;
+  categories: string[];
+}) => {
   const [newCategory, setNewCategory] = useState("");
-
-  const removeCategory = (id: string) => {
-    setCategories((prev) => prev.filter((cat) => cat.id !== id));
+  const removeCategory = (categoryToRemove: string) => {
+    onChange(
+      "categories",
+      categories.filter((cat) => cat !== categoryToRemove),
+    );
   };
 
   const handleAddCategory = () => {
     const trimmedCategory = newCategory.trim();
-
     if (trimmedCategory) {
-      const id = trimmedCategory.toLowerCase().replace(/\s+/g, "-");
-      const alreadyExists = categories.some((cat) => cat.id === id);
+      const alreadyExists = categories.some(
+        (cat) => cat.toLowerCase() === trimmedCategory.toLowerCase(),
+      );
 
       if (!alreadyExists) {
-        setCategories([
-          ...categories,
-          { id, label: trimmedCategory, checked: true },
-        ]);
+        onChange("categories", [...categories, trimmedCategory]);
         setNewCategory("");
       }
     }
   };
+
   return (
     <aside className="content-canvas__card">
       <header className="content-canvas__header">
@@ -42,11 +43,11 @@ const TripCategorySelector: React.FC = () => {
         <div className="content-canvas__list">
           {categories.map((cat) => (
             <label
-              key={cat.id}
+              key={cat} // Using the string itself as the key
               className="category-item"
-              onClick={() => removeCategory(cat.id)}
+              onClick={() => removeCategory(cat)}
             >
-              <span className="category-item__label">{cat.label}</span>
+              <span className="category-item__label">{cat}</span>
               <CloseIcon />
             </label>
           ))}
