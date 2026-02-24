@@ -54,7 +54,9 @@ const transformTrip = (trip: TripRecord): TripData => {
   return {
     id: trip.id,
     title: trip.tripName,
-    image: images[0] || "https://placehold.co/363x240",
+    image: images
+      ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
+      : "https://placehold.co/363x240",
     badge: trip.isFeatured ? "Featured" : "Winter Special",
     date: formatDateRange(trip.startDateTime, trip.endDateTime),
     duration:
