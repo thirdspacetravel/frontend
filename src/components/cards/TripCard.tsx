@@ -1,4 +1,3 @@
-import React from "react";
 import CalendarIcon from "../../icons/CalendarIcon";
 import ClockIcon from "../../icons/ClockIcon";
 import Button from "../utils/Button";
@@ -20,7 +19,7 @@ interface TripCardProps {
   className?: string;
 }
 
-const TripCard: React.FC<TripCardProps> = ({ trip, className = "" }) => {
+const TripCard = ({ trip, className = "" }: TripCardProps) => {
   return (
     <article className={`trip-card ${className}`}>
       <div className="trip-card__image-wrapper">

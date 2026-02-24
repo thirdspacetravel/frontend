@@ -6,7 +6,7 @@ import TripCard from "../cards/TripCard";
 
 const TRIPS = [
   {
-    id: 1,
+    id: "1",
     title: "Manali Leisure",
     image: "https://placehold.co/363x240",
     badge: "Best Seller",
@@ -16,7 +16,7 @@ const TRIPS = [
     price: "8,499",
   },
   {
-    id: 2,
+    id: "2",
     title: "Goa Unwind",
     image: "https://placehold.co/363x240",
     badge: "Relaxing",
@@ -26,7 +26,7 @@ const TRIPS = [
     price: "12,999",
   },
   {
-    id: 3,
+    id: "3",
     title: "Gokarna Beach Trek",
     image: "https://placehold.co/363x240",
     badge: "Adventure",

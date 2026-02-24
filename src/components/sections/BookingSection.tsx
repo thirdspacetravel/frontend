@@ -110,10 +110,9 @@ const transformTrip = (trip: TripRecord): TripData => {
 //   console.log(`Filter ${id} is now:`, selected ? selected.value : "Cleared");
 // };
 const BookingSection: React.FC = () => {
-  const { data: TRIPS = [], isLoading } = trpc.admin.fetchTrips.useQuery(
+  const { data: TRIPS = [], isLoading } = trpc.public.fetchTrips.useQuery(
     undefined,
     {
-      // Use 'select' to map through the array using your function
       select: (data) => data.map(transformTrip),
     },
   );
@@ -144,8 +143,8 @@ const BookingSection: React.FC = () => {
           <Button solid>Filter</Button>
         </div> */}
         <div className="trips-section__grid">
-          {TRIPS.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
+          {TRIPS.map((trip_item) => (
+            <TripCard key={trip_item.id} trip={trip_item} />
           ))}
         </div>
       </div>
