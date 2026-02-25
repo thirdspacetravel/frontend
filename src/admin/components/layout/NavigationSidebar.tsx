@@ -31,9 +31,9 @@ const useAdminLogout = () => {
   const navigate = useNavigate();
   const utils = trpc.useUtils();
 
-  const logoutMutation = trpc.adminAuth.logout.useMutation({
+  const logoutMutation = trpc.admin.logout.useMutation({
     onSuccess: () => {
-      utils.adminAuth.checkStatus.invalidate();
+      utils.admin.checkStatus.invalidate();
       utils.invalidate();
       navigate("/admin/login", { replace: true });
     },

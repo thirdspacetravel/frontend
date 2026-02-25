@@ -14,7 +14,7 @@ const AdminLoginPage: React.FC = () => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
-  const loginMutation = trpc.adminAuth.login.useMutation({
+  const loginMutation = trpc.admin.login.useMutation({
     onSuccess: () => {
       navigate("/admin");
     },

@@ -4,7 +4,7 @@ import { trpc } from "../../trpc";
 import Spinner from "../../components/utils/Spinner";
 
 const AdminAuthGuard: React.FC = () => {
-  const { data, isLoading, isError } = trpc.adminAuth.checkStatus.useQuery(
+  const { data, isLoading, isError } = trpc.admin.checkStatus.useQuery(
     undefined,
     {
       retry: false,
