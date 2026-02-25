@@ -37,11 +37,14 @@ const MediaGalleryUpload: React.FC<MediaGalleryUploadProps> = ({
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/admin/upload`,
+      {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      },
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
