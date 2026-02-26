@@ -5,11 +5,34 @@ import SettingsIcon from "../icons/SettingsIcon";
 import LogoutIcon from "../icons/LogoutIcon";
 import Header from "../components/utils/Header";
 import ProfileSettings from "../components/cards/ProfileSettings";
-// import BookingCard from "../components/cards/ProfileBookings";
-// import ProfileInfo from "../components/cards/ProfileInfo";
+import BookingCard from "../components/cards/ProfileBookings";
+import ProfileInfo from "../components/cards/ProfileInfo";
+import { useNavigate } from "react-router";
+import { trpc } from "../trpc";
+
+const useUserLogout = () => {
+  const navigate = useNavigate();
+  const utils = trpc.useUtils();
+
+  const logoutMutation = trpc.user.logout.useMutation({
+    onSuccess: () => {
+      utils.user.checkStatus.invalidate();
+      utils.invalidate();
+      navigate("/login", { replace: true });
+    },
+    onError: () => {
+      navigate("/login", { replace: true });
+    },
+  });
+
+  return {
+    handleLogout: () => logoutMutation.mutate(),
+    isLoggingOut: logoutMutation.isPending,
+  };
+};
 const UserProfile = () => {
   const [activeId, setActiveId] = useState<string>("profile");
-
+  const { handleLogout, isLoggingOut } = useUserLogout();
   const navItems = [
     { id: "profile", label: "My Profile", icon: <UserIcon /> },
     { id: "bookings", label: "My Bookings", icon: <CalendarIcon /> },
@@ -34,7 +57,9 @@ const UserProfile = () => {
               </a>
             ))}
             <a
-              onClick={() => {}}
+              onClick={() => {
+                if (!isLoggingOut) handleLogout();
+              }}
               className="profile-nav__link profile-nav__link--logout"
             >
               <div className="profile-nav__icon">
@@ -43,7 +68,9 @@ const UserProfile = () => {
               <span className="profile-nav__label">Log Out</span>
             </a>
           </nav>
-          <ProfileSettings />
+          {activeId === "profile" && <ProfileInfo />}
+          {activeId === "bookings" && <BookingCard />}
+          {activeId === "settings" && <ProfileSettings />}
         </div>
       </section>
     </>

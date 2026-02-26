@@ -32,6 +32,7 @@ import AdminLoginPage from "./admin/pages/AdminLoginPage";
 import AdminAuthGuard from "./admin/guards/AdminAuthGuard";
 import AdminLoginGuard from "./admin/guards/AdminLoginGuard";
 import LoginGuard from "./guards/LoginGuard";
+import AuthGuard from "./guards/AuthGuard";
 function App() {
   useSystemTheme();
   return (
@@ -42,7 +43,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
-        <Route path="/profile" element={<Profile />} />
+        <Route element={<AuthGuard />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/group-trips" element={<GroupTrips />} />

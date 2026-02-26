@@ -5,6 +5,8 @@ import GoogleIcon from "../../icons/GoogleIcon";
 import MailIcon from "../../icons/MailIcon";
 import LockIcon from "../../icons/LockIcon";
 import { trpc } from "../../trpc";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -26,6 +28,19 @@ const Login: React.FC = () => {
     });
   };
 
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (authResponse) => {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/users/auth/google`,
+        {
+          code: authResponse.code,
+        },
+        { withCredentials: true },
+      );
+      navigate("/");
+    },
+    flow: "auth-code",
+  });
   return (
     <main className="auth-page">
       <div className="auth-card">
@@ -92,7 +107,7 @@ const Login: React.FC = () => {
           <span className="auth-card__divider-text">Or</span>
         </div>
 
-        <Button className="login-with-google">
+        <Button className="login-with-google" onClick={() => loginWithGoogle()}>
           <GoogleIcon />
           <span>continue with Google</span>
         </Button>
