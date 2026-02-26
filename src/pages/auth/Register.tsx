@@ -5,16 +5,28 @@ import GoogleIcon from "../../icons/GoogleIcon";
 import MailIcon from "../../icons/MailIcon";
 import LockIcon from "../../icons/LockIcon";
 import UserIcon from "../../icons/UserIcon";
+import { trpc } from "../../trpc";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [fullName, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSignIn = (e: React.FormEvent) => {
+  const signupMutation = trpc.user.signup.useMutation({
+    onSuccess: () => {
+      navigate("/profile");
+    },
+    onError: (err) => {
+      alert(err.message);
+    },
+  });
+  const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signing in with:", { email, password });
+    signupMutation.mutate({
+      fullName,
+      email,
+      password,
+    });
   };
 
   return (
@@ -30,7 +42,7 @@ const Register: React.FC = () => {
           </p>
         </header>
 
-        <form className="auth-card__form" onSubmit={handleSignIn}>
+        <form className="auth-card__form" onSubmit={handleSignUp}>
           <div className="form-field">
             <label htmlFor="fullname" className="form-field__label">
               Full Name
@@ -42,7 +54,7 @@ const Register: React.FC = () => {
                 type="name"
                 placeholder="John Doe"
                 autoComplete="name"
-                value={name}
+                value={fullName}
                 onChange={(e) => setName(e.target.value)}
                 required
               />

@@ -21,7 +21,6 @@ import TripsPage from "./admin/pages/trips/TripsPage";
 import TripDetailPage from "./admin/pages/trips/TripDetailPage";
 import BookingsPage from "./admin/pages/BookingsPage";
 import CustomersPage from "./admin/pages/CustomersPage";
-import DesignLoader from "./components/DesignLoader";
 import EnquiriesPage from "./admin/pages/enquiries/EnquiriesPage";
 import NotificationsPage from "./admin/pages/NotificationsPage";
 import EnquiryDetailPage from "./admin/pages/enquiries/EnquiryDetailPage";
@@ -32,29 +31,36 @@ import "./admin/styles/global.scss";
 import AdminLoginPage from "./admin/pages/AdminLoginPage";
 import AdminAuthGuard from "./admin/guards/AdminAuthGuard";
 import AdminLoginGuard from "./admin/guards/AdminLoginGuard";
+import LoginGuard from "./guards/LoginGuard";
+import AuthGuard from "./guards/AuthGuard";
 function App() {
   useSystemTheme();
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route element={<DesignLoader />}>
+        <Route element={<LoginGuard />}>
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />
         </Route>
-        <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/group-trips" element={<GroupTrips />} />
-          <Route path="/corporate-trips" element={<CorporateTrips />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/terms-conditions" element={<TermsConditions />} />
-          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
-          <Route path="/safety-policy" element={<SafetyPolicy />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/trip/:tripid" element={<Trip />} />
+        <Route element={<AuthGuard />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="/group-trips" element={<GroupTrips />} />
+            <Route path="/corporate-trips" element={<CorporateTrips />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route
+              path="/cancellation-policy"
+              element={<CancellationPolicy />}
+            />
+            <Route path="/safety-policy" element={<SafetyPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/trip/:tripid" element={<Trip />} />
+          </Route>
         </Route>
 
         <Route path="/admin">

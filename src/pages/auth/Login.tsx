@@ -4,15 +4,26 @@ import Button from "../../components/utils/Button";
 import GoogleIcon from "../../icons/GoogleIcon";
 import MailIcon from "../../icons/MailIcon";
 import LockIcon from "../../icons/LockIcon";
+import { trpc } from "../../trpc";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const loginMutation = trpc.user.login.useMutation({
+    onSuccess: () => {
+      navigate("/profile");
+    },
+    onError: (err) => {
+      alert(err.message);
+    },
+  });
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signing in with:", { email, password });
+    loginMutation.mutate({
+      email,
+      password,
+    });
   };
 
   return (
