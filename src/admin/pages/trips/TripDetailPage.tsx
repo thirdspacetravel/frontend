@@ -39,9 +39,13 @@ const TripDetailPage = () => {
           </div>
           <h2 className="layout-header__title">#{tripId}</h2>
         </div>
-        <InteractiveButton onClick={handleSave}>Save Changes</InteractiveButton>
       </header>
       <div className="content">
+        <div className="content__actions">
+          <InteractiveButton onClick={handleSave}>
+            Save Changes
+          </InteractiveButton>
+        </div>
         <TripEditorForm
           ref={childRef}
           key={tripId}
