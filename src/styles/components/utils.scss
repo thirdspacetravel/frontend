@@ -57,6 +57,30 @@
                 border-color: themify(focus-ring);
             }
         }
+
+        .input-suffix {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid themify(border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+
+            .suffix {
+                padding: 0 16px;
+                color: themify(text-placeholder);
+                font-size: 15px;
+                border-right: 1px solid themify(border-subtle);
+            }
+
+            input {
+                border: none;
+            }
+
+            &:focus-within {
+                border-color: themify(focus-ring);
+            }
+        }
     }
 }
 
@@ -224,6 +248,22 @@
     &__icon {
         display: block;
     }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: themify(bg-translucent-4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: themify(text-action-primary);
+        font-weight: 500;
+        pointer-events: none;
+        border-radius: 50%;
+    }
 }
 
 .btn {
@@ -282,6 +322,15 @@
         color: themify(text-muted);
         cursor: not-allowed;
         border: 1px solid themify(border-subtle);
+
+        &.btn-solid {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover {
+                opacity: 0.5;
+            }
+        }
     }
 
     .interactive-btn-container {
@@ -294,6 +343,16 @@
         &.is-loading {
             opacity: 0;
             pointer-events: none;
+        }
+    }
+
+    &.btn--danger {
+        background-color: themify(action-danger);
+        color: themify(text-action-primary);
+        border: 0;
+
+        &:hover {
+            background-color: themify(action-danger-hover);
         }
     }
 }

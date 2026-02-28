@@ -4,6 +4,8 @@ import Button from "./Button";
 import ArrowRight from "../../icons/ArrowRightIcon";
 import MenuIcon from "../../icons/MenuIcon";
 import CloseIcon from "../../icons/CloseIcon";
+import UserProfile from "./UserProfile";
+import { trpc } from "../../trpc";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -41,10 +43,12 @@ const NavLinks = ({
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
-
+  const navigate = useNavigate();
   const toggleMenu = () => setIsOpen(!isOpen);
-
+  const { data, isLoading } = trpc.user.checkStatus.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
   const handleLogin = () => {
     navigate("/login");
   };
@@ -63,10 +67,25 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="header__actions">
-          <Button className="u-hide-mobile" onClick={handleLogin}>
-            <span>LOGIN</span>
-            <ArrowRight />
-          </Button>
+          {isLoading || !data?.authenticated || !data?.user ? (
+            <Button className="u-hide-mobile" onClick={handleLogin}>
+              <span>LOGIN</span>
+              <ArrowRight />
+            </Button>
+          ) : (
+            <UserProfile
+              name={data.user.fullName}
+              email={data.user.email}
+              avatarUrl={
+                data.user.avatar
+                  ? `${import.meta.env.VITE_API_URL}/images/${data.user.avatar}`
+                  : "/avatars/user.png"
+              }
+              onClick={() => {
+                navigate("/profile");
+              }}
+            />
+          )}
           <Button
             className="nav-toggle"
             onClick={toggleMenu}
@@ -96,10 +115,25 @@ const Header: React.FC = () => {
             <NavLinks className="nav-mobile" onClose={() => setIsOpen(false)} />
           </nav>
           <div className="mobile-menu__footer">
-            <Button className="u-hide-mobile" onClick={handleLogin}>
-              <span>LOGIN</span>
-              <ArrowRight />
-            </Button>
+            {isLoading || !data?.authenticated || !data?.user ? (
+              <Button className="u-hide-mobile" onClick={handleLogin}>
+                <span>LOGIN</span>
+                <ArrowRight />
+              </Button>
+            ) : (
+              <UserProfile
+                name={data.user.fullName}
+                email={data.user.email}
+                avatarUrl={
+                  data.user.avatar
+                    ? `${import.meta.env.VITE_API_URL}/images/${data.user.avatar}`
+                    : "/avatars/user.png"
+                }
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

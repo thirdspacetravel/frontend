@@ -92,6 +92,7 @@
                 font-size: 12px;
                 font-weight: 400;
                 word-wrap: break-word;
+                text-transform: capitalize;
             }
         }
     }
@@ -105,7 +106,7 @@
             border-radius: 12px;
             width: 100%;
             object-fit: cover;
-            max-height: 300px;
+            max-height: 400px;
         }
     }
 
@@ -202,18 +203,7 @@
         }
     }
 
-    &__input {
-        padding: 8px 10px;
-        border: 1.5px solid themify(border-subtle);
-        border-radius: 12px;
-        font-size: 13px;
-        width: 100%;
-        font-family: inherit;
-        color: inherit;
-        outline: none;
-        background-color: transparent;
-        transition: border-color 0.2s, box-shadow 0.2s;
-
+    input {
         &:focus {
             border-color: themify(focus-ring);
         }
@@ -249,13 +239,5 @@
         .booking-form__input {
             padding-right: 60px;
         }
-    }
-
-    &__input-suffix {
-        position: absolute;
-        right: 12px;
-        font-size: 13px;
-        color: themify(text-muted);
-        pointer-events: none;
     }
 }

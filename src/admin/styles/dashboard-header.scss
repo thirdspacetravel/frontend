@@ -76,64 +76,75 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
     }
 }
 
-.action-menu {
-    max-width: 200px;
-    background: themify(bg-base);
-    border-radius: 16px;
-    padding: 4px;
-    box-shadow: $box-shadow;
+.action-menu-container {
+    position: fixed;
+    right: 40px;
+    z-index: 100;
 
-    &__header {
-        padding: 8px 12px 4px 12px;
-    }
+    .action-menu {
+        min-width: 200px;
+        background: themify(bg-base);
+        border-radius: 16px;
+        padding: 4px;
+        box-shadow: 0 0 15px -3px rgba(0, 0, 0, 0.1);
 
-    &__title {
-        color: themify(text-muted);
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    &__section {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 8px;
-        font-size: 14px;
-        color: themify(text-main);
-        text-align: left;
-        transition: all 0.2s;
-
-        svg {
-            flex-shrink: 0;
+        &__header {
+            padding: 8px 12px 4px 12px;
         }
 
-        &:hover {
-            background-color: themify(bg-translucent-2);
+        &__title {
+            color: themify(text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        &--danger {
-            color: Color(red);
+        &__section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            color: themify(text-main);
+            text-align: left;
+            transition: all 0.2s;
+
+            svg {
+                flex-shrink: 0;
+            }
 
             &:hover {
-                background-color: #FEF2F2;
+                background-color: themify(bg-translucent-2);
+            }
+
+            &--danger {
+                color: Color(red);
+
+                &:hover {
+                    background-color: #FEF2F2;
+                }
             }
         }
-    }
 
-    &__divider {
-        height: 1px;
-        border: none;
-        background-color: themify(border-subtle);
-        margin: 4px 0;
+        &__divider {
+            height: 1px;
+            border: none;
+            background-color: themify(border-subtle);
+            margin: 4px 0;
+        }
+
+        &--reverse {
+            top: auto;
+            bottom: 40px;
+        }
     }
 }

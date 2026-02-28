@@ -1,7 +1,7 @@
 import React from "react";
-import CalendarIcon from "../../../icons/CalendarIcon";
-import FilterIcon from "../../../icons/FilterIcon";
-import SearchIcon from "../../../icons/SearchIcon";
+// import CalendarIcon from "../../../icons/CalendarIcon";
+// import FilterIcon from "../../../icons/FilterIcon";
+// import SearchIcon from "../../../icons/SearchIcon";
 import MoreIcon from "../../../icons/MoreIcon";
 interface Customer {
   id: string;
@@ -89,7 +89,7 @@ const MOCK_CUSTOMERS: Customer[] = [
 const CustomersTable: React.FC = () => {
   return (
     <>
-      <header className="dashboard-header">
+      {/* <header className="dashboard-header">
         <div className="dashboard-header__search-wrapper">
           <SearchIcon className="dashboard-header__search-icon" />
           <input
@@ -110,7 +110,7 @@ const CustomersTable: React.FC = () => {
             <span>Date Range</span>
           </button>
         </div>
-      </header>
+      </header> */}
 
       <div className="dashboard-card">
         <div className="dashboard-card__header">

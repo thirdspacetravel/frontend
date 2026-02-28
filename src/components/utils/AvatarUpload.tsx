@@ -1,45 +1,93 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Spinner from "./Spinner";
+
 interface AvatarUploadProps {
   imageUrl?: string;
+  onUploadSuccess?: (fileName: string) => void;
+  forUsers?: boolean;
 }
 
 const AvatarUpload = ({
   imageUrl = "https://placehold.co/120x120",
+  onUploadSuccess = () => {},
+  forUsers = false,
 }: AvatarUploadProps) => {
   const [image, setImage] = useState<string>(imageUrl);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setImage(imageUrl);
+  }, [imageUrl]);
+
   const handleIconClick = () => {
+    if (isUploading) return;
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // 2. Prepare for upload
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      setIsUploading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/${forUsers ? "users" : "admin"}/upload`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) throw new Error("Upload failed");
+
+      const data = await response.json();
+      if (onUploadSuccess && data.filename) {
+        onUploadSuccess(data.filename);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image. Please try again.");
+      setImage(imageUrl);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
-    <div className="avatar-uploader">
+    <div className={`avatar-uploader ${isUploading ? "uploading" : ""}`}>
       <div className="avatar-uploader__wrapper">
         <img
           className="avatar-uploader__img"
           src={image}
           alt="Profile preview"
+          style={{ opacity: isUploading ? 0.5 : 1 }}
         />
+        {isUploading && (
+          <div className="overlay">
+            <Spinner size={20} strokeWidth={2} />
+          </div>
+        )}
         <button
           className="avatar-uploader__btn"
           onClick={handleIconClick}
           aria-label="Upload profile photo"
+          disabled={isUploading}
         >
           <svg
-            width="16"
-            height="16"
             viewBox="0 0 16 16"
             fill="none"
             className="avatar-uploader__icon"

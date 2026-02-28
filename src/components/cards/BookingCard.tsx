@@ -1,34 +1,66 @@
 import React, { useState } from "react";
-import TourSummary from "../sections/TourSummarySection";
-import { CustomDropdown } from "../utils/InputUtils";
+import TourSummary from "../sections/TourSummarySection"; // Assuming this still fits the context
+import { CustomDropdown, SuffixInput, TextInput } from "../utils/InputUtils";
 import Button from "../utils/Button";
+import type { TripDetails } from "../../admin/components/trips/types";
 
-const BookingCard: React.FC = () => {
-  const roomOptions = [
-    { label: "Standard Room", value: 1 },
-    { label: "Deluxe Mountain View", value: 2 },
-    { label: "Presidential Suite", value: 3 },
+const formatTripDates = (start: Date | null, end: Date | null) => {
+  if (!start || !end) return "Dates TBD";
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+  };
+
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const yearOptions: Intl.DateTimeFormatOptions = sameYear
+    ? {}
+    : { year: "numeric" };
+
+  const startDateStr = start.toLocaleDateString("en-US", options);
+  const endDateStr = end.toLocaleDateString("en-US", {
+    ...options,
+    ...yearOptions,
+  });
+
+  return `${startDateStr} - ${endDateStr}`;
+};
+const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
+  const packageOptions = [
+    { label: "Quad Sharing", value: 1 },
+    { label: "Triple Sharing", value: 2 },
+    { label: "Double Sharing", value: 3 },
   ];
-  const [checkIn, setCheckIn] = useState("2025-09-14");
-  const [checkOut, setCheckOut] = useState("2025-09-17");
-  const [guests, setGuests] = useState(2);
+  const charges = [trip.priceQuad, trip.priceTriple, trip.priceDouble];
+  const [passengers, setPassengers] = useState(2);
+  const [tripRoom, setRoom] = useState(1);
+
   return (
     <section className="booking-card">
       <div className="booking-card__container">
         {/* Main Content Area */}
         <div className="booking-card__main-content">
-          <TourSummary />
+          <TourSummary
+            title={trip.tripName}
+            location={trip.destination}
+            dateRange={formatTripDates(trip.startDateTime, trip.endDateTime)}
+            duration={`${trip.days} Days / ${trip.nights} Nights`}
+            features={trip.categories.join(" • ")}
+          />
           <div className="booking-card__gallery">
             <img
               className="booking-card__hero"
-              src="https://placehold.co/845x360"
-              alt="Main"
+              src={
+                trip.images[0]
+                  ? `${import.meta.env.VITE_API_URL}/images/${trip.images[0]}`
+                  : "https://placehold.co/845x360"
+              }
+              alt={trip.tripName}
             />
-            <div className="booking-card__thumbnails">
-              <img src="https://placehold.co/276x180" alt="Thumb 1" />
-              <img src="https://placehold.co/276x180" alt="Thumb 2" />
-              <img src="https://placehold.co/276x180" alt="Thumb 3" />
-            </div>
+            {/* <div className="booking-card__thumbnails">
+              <img src="https://placehold.co/276x180" alt="Trip Thumb 1" />
+              <img src="https://placehold.co/276x180" alt="Trip Thumb 2" />
+              <img src="https://placehold.co/276x180" alt="Trip Thumb 3" />
+            </div> */}
           </div>
         </div>
 
@@ -37,76 +69,78 @@ const BookingCard: React.FC = () => {
           <div className="booking-sidebar">
             <div className="booking-sidebar__pricing">
               <div>
-                <span className="booking-sidebar__amount">$287</span>
+                <span className="booking-sidebar__amount">
+                  ₹{(charges[tripRoom - 1] || 0).toLocaleString()}
+                </span>
                 <span className="booking-sidebar__label">
-                  per night, per room
+                  per person, all-inclusive
                 </span>
               </div>
               <div className="booking-sidebar__guarantee">
-                Best price guarantee
+                Verified experiences
               </div>
             </div>
+
             <form className="booking-form" onSubmit={(e) => e.preventDefault()}>
               <div className="booking-form__row">
-                <div className="booking-form__field">
-                  <label htmlFor="check-in">Check-in</label>
-                  <input
-                    id="check-in"
-                    type="date"
-                    className="booking-form__input"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
-                </div>
-                <div className="booking-form__field">
-                  <label htmlFor="check-out">Check-out</label>
-                  <input
-                    id="check-out"
-                    type="date"
-                    className="booking-form__input"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="booking-form__field">
-                <label htmlFor="guests">Guests</label>
-                <div className="booking-form__input-wrapper">
-                  <input
-                    id="guests"
-                    type="number"
-                    min="1"
-                    max="10"
-                    className="booking-form__input"
-                    value={guests}
-                    onChange={(e) => setGuests(parseInt(e.target.value))}
-                  />
-                  <span className="booking-form__input-suffix">adults</span>
-                </div>
-              </div>
-              <div className="booking-form__field">
-                <label>Room Type</label>
-
-                <CustomDropdown
-                  options={roomOptions}
-                  onSelect={(val) => console.log(val)}
+                <TextInput
+                  label="Start Date"
+                  type="date"
+                  value={
+                    trip.startDateTime
+                      ? new Date(trip.startDateTime).toISOString().split("T")[0]
+                      : ""
+                  }
+                  readOnly
+                />
+                <TextInput
+                  label="End Date"
+                  type="date"
+                  value={
+                    trip.endDateTime
+                      ? new Date(trip.endDateTime).toISOString().split("T")[0]
+                      : ""
+                  }
+                  readOnly
                 />
               </div>
-              <Button solid>Book now</Button>
+
+              <SuffixInput
+                label="Travelers"
+                id="passengers"
+                type="number"
+                min="1"
+                max="10"
+                value={passengers}
+                onChange={(e) => setPassengers(parseInt(e.target.value))}
+                suffix="people"
+              />
+
+              <div className="booking-form__field">
+                <label>Package Option</label>
+                <CustomDropdown
+                  options={packageOptions}
+                  value={tripRoom}
+                  onSelect={(val) => setRoom(val || 1)}
+                />
+              </div>
+
+              <Button solid>Secure Your Spot</Button>
             </form>
+
             <div className="booking-sidebar__summary">
-              <span>Total for 3 nights</span>
+              <span>Total for {passengers} people</span>
               <span className="booking-sidebar__total-price">
-                $861 <small>per person • Excl. flights</small>
+                ₹{(passengers * (charges[tripRoom - 1] || 0)).toLocaleString()}
+                <small> Incl. transport & stay</small>
               </span>
             </div>
           </div>
 
-          <div className="booking-card__actions">
+          {/* <div className="booking-card__actions">
             <Button>Itinerary PDF</Button>
             <Button solid>Enquire Now</Button>
-          </div>
+          </div> */}
         </aside>
       </div>
     </section>

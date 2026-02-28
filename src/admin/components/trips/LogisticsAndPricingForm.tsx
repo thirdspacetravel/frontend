@@ -81,15 +81,12 @@ const LogisticsAndPricingForm = ({
             id="quad-sharing-price"
             prefix="₹"
             type="number"
-            defaultValue={
-              tripData.prices.quad === null ? "" : tripData.prices.quad
-            }
+            defaultValue={tripData.priceQuad === null ? "" : tripData.priceQuad}
             onChange={(e) =>
-              onChange("prices", {
-                ...tripData.prices,
-                quad:
-                  e.target.value === "" ? null : parseInt(e.target.value, 10),
-              })
+              onChange(
+                "priceQuad",
+                e.target.value === "" ? null : parseInt(e.target.value, 10),
+              )
             }
           />
           <PrefixInput
@@ -98,14 +95,13 @@ const LogisticsAndPricingForm = ({
             prefix="₹"
             type="number"
             defaultValue={
-              tripData.prices.triple === null ? "" : tripData.prices.triple
+              tripData.priceTriple === null ? "" : tripData.priceTriple
             }
             onChange={(e) =>
-              onChange("prices", {
-                ...tripData.prices,
-                triple:
-                  e.target.value === "" ? null : parseInt(e.target.value, 10),
-              })
+              onChange(
+                "priceTriple",
+                e.target.value === "" ? null : parseInt(e.target.value, 10),
+              )
             }
           />
           <PrefixInput
@@ -114,14 +110,13 @@ const LogisticsAndPricingForm = ({
             prefix="₹"
             type="number"
             defaultValue={
-              tripData.prices.double === null ? "" : tripData.prices.double
+              tripData.priceDouble === null ? "" : tripData.priceDouble
             }
             onChange={(e) =>
-              onChange("prices", {
-                ...tripData.prices,
-                double:
-                  e.target.value === "" ? null : parseInt(e.target.value, 10),
-              })
+              onChange(
+                "priceDouble",
+                e.target.value === "" ? null : parseInt(e.target.value, 10),
+              )
             }
           />
         </div>

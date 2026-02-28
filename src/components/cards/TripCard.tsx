@@ -17,9 +17,14 @@ export interface TripData {
 interface TripCardProps {
   trip: TripData;
   className?: string;
+  onClick?: () => void;
 }
 
-const TripCard = ({ trip, className = "" }: TripCardProps) => {
+const TripCard = ({
+  trip,
+  className = "",
+  onClick = () => {},
+}: TripCardProps) => {
   return (
     <article className={`trip-card ${className}`}>
       <div className="trip-card__image-wrapper">
@@ -56,7 +61,9 @@ const TripCard = ({ trip, className = "" }: TripCardProps) => {
             <span className="trip-card__price-label">Starting from</span>
             <span className="trip-card__price-value">₹{trip.price}</span>
           </div>
-          <Button solid>View Details</Button>
+          <Button solid onClick={onClick}>
+            View Details
+          </Button>
         </footer>
       </div>
     </article>

@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  type InputHTMLAttributes,
+} from "react";
 import ChevronDownIcon from "../../icons/ChevronDownIcon";
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -41,6 +46,28 @@ export const PrefixInput: React.FC<PrefixInputProps> = ({
   );
 };
 
+interface SuffixInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  suffix: string;
+  id: string;
+}
+
+export const SuffixInput: React.FC<SuffixInputProps> = ({
+  label,
+  suffix,
+  id,
+  ...props
+}) => {
+  return (
+    <div className="input__field">
+      <label htmlFor={id}>{label}</label>
+      <div className="input-prefix">
+        <input id={id} {...props} />
+        <span className="prefix">{suffix}</span>
+      </div>
+    </div>
+  );
+};
 interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   minValue?: number;
@@ -60,36 +87,40 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 };
 
-interface DropdownOption {
+interface DropdownOption<T> {
   label: string;
-  value: number | null;
+  value: T | null;
 }
 
-interface CustomDropdownProps {
-  options: DropdownOption[];
-  value?: number | null;
-  onSelect?: (option: number | null) => void;
+// 2. Make the props interface generic, defaulting T to number
+interface CustomDropdownProps<T = number> {
+  options: DropdownOption<T>[];
+  value?: T | null;
+  onSelect?: (option: T | null) => void;
   placeholder?: string;
   direction?: "down" | "up";
 }
 
-export const CustomDropdown: React.FC<CustomDropdownProps> = ({
+// 3. Apply the generic to the function definition
+export const CustomDropdown = <T = number,>({
   options,
   value = null,
   onSelect,
   placeholder = "Select an option",
   direction = "down",
-}) => {
+}: CustomDropdownProps<T>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<number | null>(value);
+  const [selectedValue, setSelectedValue] = useState<T | null>(value);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setSelectedValue(value);
   }, [value]);
 
   const selectedOption = options.find((opt) => opt.value === selectedValue);
   const displayLabel = selectedOption ? selectedOption.label : placeholder;
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -103,7 +134,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleOptionClick = (optionValue: number | null) => {
+  const handleOptionClick = (optionValue: T | null) => {
     setSelectedValue(optionValue);
     if (onSelect) onSelect(optionValue);
     setIsOpen(false);
@@ -111,7 +142,9 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <div
-      className={`custom-select ${isOpen ? "custom-select--open" : ""} ${direction == "up" ? "custom-select--dropup" : ""} `}
+      className={`custom-select ${isOpen ? "custom-select--open" : ""} ${
+        direction === "up" ? "custom-select--dropup" : ""
+      }`}
       ref={dropdownRef}
     >
       <div
@@ -134,7 +167,9 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
       <ul className="custom-select__list" role="listbox">
         {options.map((option, index) => (
           <li
-            key={option.value !== null ? option.value : `null-opt-${index}`}
+            key={
+              option.value !== null ? String(option.value) : `null-opt-${index}`
+            }
             className={`custom-select__item ${
               option.value === selectedValue
                 ? "custom-select__item--active"

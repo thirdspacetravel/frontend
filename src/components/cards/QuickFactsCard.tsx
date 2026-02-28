@@ -25,9 +25,9 @@ const QuickFacts: React.FC = () => {
       <div className="quick-facts__container">
         {facts.map((fact) => (
           <div key={fact.id} className="quick-facts__item">
-            <div className="quick-facts__icon-wrapper">
+            {/* <div className="quick-facts__icon-wrapper">
               <div className="quick-facts__icon"></div>
-            </div>
+            </div> */}
             <div className="quick-facts__content">
               <span className="quick-facts__label">{fact.label}</span>
               <span className="quick-facts__value">{fact.value}</span>

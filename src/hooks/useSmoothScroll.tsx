@@ -30,31 +30,6 @@ export const useSmoothScroll = () => {
         Math.min(scrollState.current.target, maxScroll()),
       );
     };
-
-    /* =========================
-       TOUCH (mobile)
-    ========================== */
-    const handleTouchStart = (e: TouchEvent) => {
-      scrollState.current.touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-
-      const currentY = e.touches[0].clientY;
-      const delta = scrollState.current.touchStartY - currentY;
-
-      scrollState.current.touchStartY = currentY;
-
-      scrollState.current.target += 1.5 * delta;
-
-      // Clamp
-      scrollState.current.target = Math.max(
-        0,
-        Math.min(scrollState.current.target, maxScroll()),
-      );
-    };
-
     let rafId: number;
 
     const animate = () => {
@@ -75,19 +50,11 @@ export const useSmoothScroll = () => {
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, {
-      passive: false,
-    });
-    window.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
 
     rafId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(rafId);
     };
   }, []);

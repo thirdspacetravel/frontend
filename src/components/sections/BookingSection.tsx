@@ -6,64 +6,8 @@ import React from "react";
 // import Button from "../utils/Button";
 import TripCard, { type TripData } from "../cards/TripCard";
 import { trpc } from "../../trpc";
-import type { DayData } from "../../admin/components/trips/types";
 // import LocationIcon from "../../icons/LocationIcon";
 // The shape of your Prisma model
-interface TripRecord {
-  id: string;
-  tripName: string;
-  destination: string;
-  tripType?: number | null;
-  fullOverview: string;
-  days?: number | null;
-  nights?: number | null;
-  totalSeats?: number | null;
-  pickupLocation: string;
-  dropOffLocation: string;
-  inclusions: string;
-  exclusions: string;
-  itinerary: DayData[];
-  status: number;
-  isFeatured: boolean;
-  isAcceptingBookings: boolean;
-  categories: string[];
-  priceQuad?: number | null;
-  priceTriple?: number | null;
-  priceDouble?: number | null;
-  startDateTime?: Date | string | null;
-  endDateTime?: Date | string | null;
-  images: string[];
-}
-
-const transformTrip = (trip: TripRecord): TripData => {
-  // Helper to format date range: "Apr 12-15"
-  const formatDateRange = (
-    start?: Date | string | null,
-    end?: Date | string | null,
-  ): string => {
-    if (!start || !end) return "Dates TBD";
-    const s = new Date(start);
-    const month = s.toLocaleString("en-US", { month: "short" });
-    return `${month} ${s.getDate()}`;
-  };
-
-  const images = trip.images;
-  const categories = trip.categories;
-
-  return {
-    id: trip.id,
-    title: trip.tripName,
-    image: images[0]
-      ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
-      : "https://placehold.co/363x240",
-    badge: trip.isFeatured ? "Featured" : "Winter Special",
-    date: formatDateRange(trip.startDateTime, trip.endDateTime),
-    duration:
-      trip.days && trip.nights ? `${trip.days}D/${trip.nights}N` : "TBD",
-    tags: categories.length > 0 ? categories : ["Adventure"],
-    price: trip.priceQuad ? trip.priceQuad.toLocaleString() : "0",
-  };
-};
 // interface FilterOption {
 //   label: string;
 //   value: string | number | null;
@@ -111,10 +55,44 @@ const transformTrip = (trip: TripRecord): TripData => {
 //   console.log(`Filter ${id} is now:`, selected ? selected.value : "Cleared");
 // };
 const BookingSection: React.FC = () => {
-  const { data: TRIPS = [], isLoading } = trpc.public.fetchTrips.useQuery(
+  const { data: TRIPS = [], isLoading } = trpc.public.fetchLiveTrips.useQuery(
     undefined,
     {
-      select: (data) => data.map(transformTrip),
+      select: (data) =>
+        data.map((trip): TripData => {
+          const images = trip.images;
+          const categories = trip.categories;
+
+          // 1. Convert potential string to Date object
+          const dateObject = trip.startDateTime
+            ? new Date(trip.startDateTime)
+            : null;
+
+          return {
+            id: trip.id,
+            title: trip.tripName,
+            image: images[0]
+              ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
+              : "https://placehold.co/363x240",
+            badge: trip.isFeatured
+              ? "Featured"
+              : trip.featuredCategories
+                ? trip.featuredCategories.replace(/_/g, " ") // Capitalize first letter of each word
+                : "General",
+            date: dateObject
+              ? dateObject.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              : "Dates TBD",
+            duration:
+              trip.days && trip.nights
+                ? `${trip.days}D/${trip.nights}N`
+                : "TBD",
+            tags: categories.length > 0 ? categories : ["Adventure"],
+            price: trip.priceQuad ? trip.priceQuad.toLocaleString() : "0",
+          };
+        }),
     },
   );
   if (isLoading) return <div></div>;

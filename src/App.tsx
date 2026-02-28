@@ -57,7 +57,7 @@ function App() {
           <Route path="/cancellation-policy" element={<CancellationPolicy />} />
           <Route path="/safety-policy" element={<SafetyPolicy />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/trip/:tripid" element={<Trip />} />
+          <Route path="/trip/:tripId" element={<Trip />} />
         </Route>
         <Route path="/admin">
           <Route element={<AdminLoginGuard />}>

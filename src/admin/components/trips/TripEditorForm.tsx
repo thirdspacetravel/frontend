@@ -6,23 +6,42 @@ import TripPreviewCard from "./TripPreviewCard";
 import PublishStatusToggle from "./PublishStatusToggle";
 import TripCategorySelector from "./TripCategorySelector";
 import PricingDatesForm from "./PricingDatesForm";
-import OrganizationDetailsCard from "./OrganizationDetailsCard";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import type { TripDetails } from "./types";
 import { trpc } from "../../../trpc";
-import { serializeTrip } from "./utils";
+import { validateTripForPublishing } from "./validation";
 interface Props {
   id: string;
   initialData: TripDetails;
+  onDirtyChange: (isDirty: boolean) => void;
 }
 export type ChildHandle = {
   handleSave: () => Promise<void>;
+  handlePublish: () => Promise<void>;
+  handleCancel: () => Promise<void>;
+  handleComplete: () => Promise<void>;
 };
 
 const TripEditorForm = forwardRef<ChildHandle, Props>(
-  ({ id, initialData }, ref) => {
+  ({ id, initialData, onDirtyChange }, ref) => {
     const [tripData, setTripData] = useState<TripDetails>(initialData);
+    const lastDirtyRef = useRef<boolean>(false);
 
+    useEffect(() => {
+      const currentDataString = JSON.stringify(tripData);
+      const initialDataString = JSON.stringify(initialData);
+      const isDirty = currentDataString !== initialDataString;
+      if (isDirty !== lastDirtyRef.current) {
+        lastDirtyRef.current = isDirty;
+        onDirtyChange(isDirty);
+      }
+    }, [tripData, initialData, onDirtyChange]);
     const updateTripField = <K extends keyof TripDetails>(
       label: K,
       value: TripDetails[K],
@@ -41,9 +60,39 @@ const TripEditorForm = forwardRef<ChildHandle, Props>(
     });
     useImperativeHandle(ref, () => ({
       handleSave: async () => {
+        const { isValid, errors } = validateTripForPublishing(tripData);
+        if (!isValid && tripData.status === "PUBLISHED") {
+          alert(`Trip is not ready for Saving. Errors: ${errors.join(", ")}`);
+          return;
+        }
+        await updateTripMutation.mutateAsync(tripData);
+      },
+      handlePublish: async () => {
+        const { isValid, errors } = validateTripForPublishing(tripData);
+        if (!isValid) {
+          alert(
+            `Trip is not ready for publishing. Errors: ${errors.join(", ")}`,
+          );
+          return;
+        }
+        updateTripField("status", "PUBLISHED");
         await updateTripMutation.mutateAsync({
-          id,
-          ...serializeTrip(tripData),
+          ...tripData,
+          status: "PUBLISHED",
+        });
+      },
+      handleCancel: async () => {
+        updateTripField("status", "CANCELLED");
+        await updateTripMutation.mutateAsync({
+          ...tripData,
+          status: "CANCELLED",
+        });
+      },
+      handleComplete: async () => {
+        updateTripField("status", "COMPLETED");
+        await updateTripMutation.mutateAsync({
+          ...tripData,
+          status: "COMPLETED",
         });
       },
     }));
@@ -78,7 +127,6 @@ const TripEditorForm = forwardRef<ChildHandle, Props>(
             tripData={tripData}
             onChange={(label, value) => updateTripField(label, value)}
           />
-          <OrganizationDetailsCard />
         </aside>
       </div>
     );

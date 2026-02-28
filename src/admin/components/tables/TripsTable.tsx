@@ -1,26 +1,14 @@
 import React from "react";
-import CalendarIcon from "../../../icons/CalendarIcon";
-import FilterIcon from "../../../icons/FilterIcon";
 import SearchIcon from "../../../icons/SearchIcon";
-import MoreIcon from "../../../icons/MoreIcon";
 import { useNavigate } from "react-router";
 import InteractiveButton from "../../../components/utils/InteractiveButton";
 import AddIcon from "../../../icons/AddIcon";
 import { trpc } from "../../../trpc";
+import TrashIcon from "../../../icons/TrashIcon";
+import Spinner from "../../../components/utils/Spinner";
 
-const getStatusDetails = (status: number) => {
-  switch (status) {
-    case 1:
-      return { label: "Draft", class: "draft" };
-    case 2:
-      return { label: "Active", class: "active" };
-    case 3:
-      return { label: "Completed", class: "completed" };
-    default:
-      return { label: "Unknown", class: "unknown" };
-  }
-};
 const TripsTable: React.FC = () => {
+  const [page, setPage] = React.useState(1);
   const navigate = useNavigate();
 
   const utils = trpc.useUtils();
@@ -28,14 +16,32 @@ const TripsTable: React.FC = () => {
   const createTripMutation = trpc.admin.createDraftTrip.useMutation({
     onSuccess: () => {
       utils.admin.fetchTrips.invalidate();
+      utils.admin.getTripsCount.invalidate();
     },
   });
-
+  const deleteTripMutation = trpc.admin.deleteTrip.useMutation({
+    onSuccess: () => {
+      utils.admin.fetchTrips.invalidate();
+      utils.admin.getTripsCount.invalidate();
+    },
+  });
   const handleAddTrip = async () => {
     await createTripMutation.mutateAsync();
   };
+  // Fetch paginated data
+  const { data: trips = [] } = trpc.admin.fetchTrips.useQuery({
+    page,
+  });
 
-  const { data: trips = [] } = trpc.admin.fetchTrips.useQuery();
+  // Fetch total count for pagination logic
+  const { data: countData } = trpc.admin.getTripsCount.useQuery();
+
+  const totalPages = countData?.totalPages || 1;
+  const totalItems = countData?.total || 0;
+
+  // Calculate showing range: e.g., "Showing 11-20 of 48"
+  const startRange = (page - 1) * 10 + 1;
+  const endRange = Math.min(page * 10, totalItems);
   return (
     <>
       <header className="dashboard-header">
@@ -46,18 +52,6 @@ const TripsTable: React.FC = () => {
             className="dashboard-header__search-input"
             placeholder="Search by ID, customer name..."
           />
-        </div>
-
-        <div className="dashboard-header__filters">
-          <button className="dashboard-header__filter-btn">
-            <FilterIcon />
-            <span>Status: All</span>
-          </button>
-
-          <button className="dashboard-header__filter-btn">
-            <CalendarIcon />
-            <span>Date Range</span>
-          </button>
         </div>
       </header>
 
@@ -74,19 +68,21 @@ const TripsTable: React.FC = () => {
             <thead>
               <tr>
                 <th>Trip Name</th>
+                <th>Trip Id</th>
                 <th>Duration</th>
                 <th>Starting Price</th>
-                <th>Next Date</th>
+                <th>Start Date</th>
                 <th>Status</th>
-                <th className="text-right">Actions</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {trips.length > 0 ? (
                 trips.map((trip) => {
-                  const statusInfo = getStatusDetails(trip.status);
                   const tripImages = trip.images || JSON.parse("[]"); // Handle JSON string if not auto-parsed
-
+                  const isDeletingThisTrip =
+                    deleteTripMutation.isPending &&
+                    deleteTripMutation.variables?.id === trip.id;
                   return (
                     <tr
                       key={trip.id}
@@ -111,13 +107,19 @@ const TripsTable: React.FC = () => {
                         </div>
                       </td>
                       <td>
+                        #TR-{trip.status.slice(0, 3).toUpperCase()}-
+                        {trip.tripNo
+                          .toString()
+                          .padStart(countData?.total || 4, "0")}
+                      </td>
+                      <td>
                         <span className="duration-text">
                           {trip.days}D / {trip.nights}N
                         </span>
                       </td>
 
                       <td>
-                        <span className="price-tag">{trip.priceQuad}</span>
+                        <span className="price-tag">₹{trip.priceQuad}</span>
                       </td>
 
                       <td>
@@ -132,9 +134,9 @@ const TripsTable: React.FC = () => {
                       </td>
                       <td>
                         <span
-                          className={`status-badge status-badge--${statusInfo.class}`}
+                          className={`status-badge status-badge--${trip.status.toLowerCase()}`}
                         >
-                          {statusInfo.label}
+                          {trip.status}
                         </span>
                       </td>
 
@@ -142,11 +144,16 @@ const TripsTable: React.FC = () => {
                         <button
                           className="action-btn"
                           onClick={(e) => {
-                            e.stopPropagation(); // Prevent row click
-                            // Handle menu
+                            e.stopPropagation();
+                            deleteTripMutation.mutate({ id: trip.id });
                           }}
+                          disabled={deleteTripMutation.isPending}
                         >
-                          <MoreIcon />
+                          {isDeletingThisTrip ? (
+                            <Spinner size={16} strokeWidth={1} />
+                          ) : (
+                            <TrashIcon color="red" />
+                          )}
                         </button>
                       </td>
                     </tr>
@@ -169,11 +176,26 @@ const TripsTable: React.FC = () => {
           </table>
         </div>
         <footer className="dashboard-card__pagination">
-          <span className="pagination-info">Showing 1-5 of 48 bookings</span>
+          <span className="pagination-info">
+            Showing {totalItems > 0 ? `${startRange}-${endRange}` : "0"} of{" "}
+            {totalItems} trips
+          </span>
 
           <div className="pagination-controls">
-            <button className="btn btn--disabled">Previous</button>
-            <button className="btn">Next</button>
+            <button
+              className={`btn ${page === 1 ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <button
+              className={`btn ${page >= totalPages ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              Next
+            </button>
           </div>
         </footer>
       </div>

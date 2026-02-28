@@ -1,3 +1,4 @@
+import { TripCategory } from "../../../../../backend/src/generated/prisma/enums";
 import { CustomDropdown } from "../../../components/utils/InputUtils";
 import { Switch } from "../../../components/utils/InputUtils";
 import type { OnChangeHandler, TripDetails } from "./types";
@@ -9,23 +10,30 @@ const PublishStatusToggle = ({
   onChange: OnChangeHandler;
   tripData: TripDetails;
 }) => {
-  const statusOptions = [
-    { label: "Draft", value: 1 },
-    { label: "Active", value: 2 },
-    { label: "Completed", value: 3 },
+  // Category Options
+  const categoryOptions = [
+    { label: "Winter Expedition", value: TripCategory.WINTER_EXPEDITION },
+    { label: "Summer Special", value: TripCategory.SUMMER_SPECIAL },
+    { label: "Trekking", value: TripCategory.TREKKING },
+    { label: "Biking Trip", value: TripCategory.BIKING_TRIP },
+    { label: "Backpacking", value: TripCategory.BACKPACKING },
+    { label: "Weekend Getaway", value: TripCategory.WEEKEND_GETAWAY },
   ];
+
   return (
     <aside className="content-canvas__card">
       <header className="content-canvas__header">
-        <h2 className="content-canvas__title">Status & Visibility</h2>
+        <h2 className="content-canvas__title">Settings & Trip Feature</h2>
       </header>
       <div className="content-canvas__body">
-        <div className="input__field ">
-          <label>Status</label>
-          <CustomDropdown
-            options={statusOptions}
-            value={tripData.status}
-            onSelect={(val) => onChange("status", val)}
+        <div className="input__field">
+          <label htmlFor="trip-feature">Trip Feature</label>
+          <CustomDropdown<TripCategory>
+            options={categoryOptions} // Update with your actual category options array
+            placeholder="Select Category"
+            value={tripData.featuredCategories}
+            onSelect={(val) => onChange("featuredCategories", val || null)}
+            direction="up"
           />
         </div>
         <div className="content-canvas__toggle-row">
