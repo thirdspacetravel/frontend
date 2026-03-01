@@ -7,7 +7,10 @@ import { trpc } from "../../trpc";
 const TripsSection: React.FC = () => {
   const navigate = useNavigate();
   const { data: TRIPS = [], isLoading } = trpc.public.fetchLiveTrips.useQuery(
-    undefined,
+    {
+      limit: 3,
+      page: 1,
+    },
     {
       select: (data) =>
         data.map((trip): TripData => {

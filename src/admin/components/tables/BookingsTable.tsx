@@ -1,108 +1,55 @@
-import React from "react";
-import CalendarIcon from "../../../icons/CalendarIcon";
-import FilterIcon from "../../../icons/FilterIcon";
+import React, { useState } from "react";
+import { trpc } from "../../../trpc";
 import SearchIcon from "../../../icons/SearchIcon";
-interface BookingType {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-    avatarUrl?: string;
-  };
-  trip: {
-    title: string;
-    dates: string;
-  };
-  travelers: number;
-  totalAmount: string;
-  status: "Paid" | "Pending" | "Cancelled";
-  dateBooked: string;
-}
-
-const MOCK_BOOKINGS: BookingType[] = [
-  {
-    id: "#BK-2024-001",
-    customer: {
-      name: "Arjun Mehta",
-      email: "arjun.m@example.com",
-      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun",
-    },
-    trip: {
-      title: "Manali & Kasol Escape",
-      dates: "14 Oct - 18 Oct",
-    },
-    travelers: 2,
-    totalAmount: "₹16,998",
-    status: "Paid",
-    dateBooked: "Oct 10, 2024",
-  },
-  {
-    id: "#BK-2024-002",
-    customer: {
-      name: "Sneha Kapoor",
-      email: "sneha.kap@example.com",
-      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha",
-    },
-    trip: {
-      title: "Spiti Valley Adventure",
-      dates: "20 Oct - 26 Oct",
-    },
-    travelers: 4,
-    totalAmount: "₹48,000",
-    status: "Pending",
-    dateBooked: "Oct 11, 2024",
-  },
-  {
-    id: "#BK-2024-003",
-    customer: {
-      name: "Rohan Das",
-      email: "r.das99@example.com",
-      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rohan",
-    },
-    trip: {
-      title: "Goa Workation",
-      dates: "01 Nov - 07 Nov",
-    },
-    travelers: 1,
-    totalAmount: "₹12,500",
-    status: "Paid",
-    dateBooked: "Oct 12, 2024",
-  },
-  {
-    id: "#BK-2024-004",
-    customer: {
-      name: "Priya Sharma",
-      email: "priya.s@example.com",
-      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
-    },
-    trip: {
-      title: "Manali & Kasol Escape",
-      dates: "14 Oct - 18 Oct",
-    },
-    travelers: 2,
-    totalAmount: "₹16,998",
-    status: "Cancelled",
-    dateBooked: "Oct 08, 2024",
-  },
-  {
-    id: "#BK-2024-005",
-    customer: {
-      name: "Vikram Singh",
-      email: "vikram.singh@example.com",
-      avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Vikram",
-    },
-    trip: {
-      title: "Kerala Backwaters",
-      dates: "10 Dec - 15 Dec",
-    },
-    travelers: 6,
-    totalAmount: "₹92,400",
-    status: "Paid",
-    dateBooked: "Oct 12, 2024",
-  },
-];
 
 const BookingsTable: React.FC = () => {
+  const [page, setPage] = useState(1);
+  const utils = trpc.useUtils();
+  const { data: bookings, isLoading: isBookingsLoading } =
+    trpc.admin.fetchBookings.useQuery({ page });
+  const { data: countData } = trpc.admin.getBookingsCount.useQuery();
+  const markAsRefunded = trpc.admin.markAsRefunded.useMutation({
+    onSuccess() {
+      utils.admin.fetchBookings.invalidate();
+    },
+  });
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "TXN_SUCCESS":
+        return { text: "Paid", class: "paid" };
+      case "TXN_PENDING":
+        return { text: "Pending", class: "pending" };
+      case "TXN_FAILURE":
+        return { text: "Failed", class: "cancelled" };
+      case "TXN_CANCELLED":
+        return { text: "Cancelled", class: "cancelled" };
+      default:
+        return { text: status, class: "pending" };
+    }
+  };
+
+  // 3. Date Formatter
+  const formatDate = (date: Date | string) => {
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+  const formatTime = (date: Date | string) => {
+    return new Date(date).toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  if (isBookingsLoading) return <div>Loading bookings...</div>;
+  const LIMIT = 10; // Should match your backend LIMIT
+  const totalItems = countData?.total || 0;
+  const totalPages = countData?.totalPages || 1;
+  const startRange = (page - 1) * LIMIT + 1;
+  const endRange = Math.min(page * LIMIT, totalItems);
   return (
     <>
       <header className="dashboard-header">
@@ -114,84 +61,161 @@ const BookingsTable: React.FC = () => {
             placeholder="Search by ID, customer name..."
           />
         </div>
-
-        <div className="dashboard-header__filters">
-          <button className="dashboard-header__filter-btn">
-            <FilterIcon />
-            <span>Status: All</span>
-          </button>
-
-          <button className="dashboard-header__filter-btn">
-            <CalendarIcon />
-            <span>Date Range</span>
-          </button>
-        </div>
       </header>
 
       <div className="dashboard-card">
         <div className="dashboard-card__header">
-          <h2 className="dashboard-card__title">bookings</h2>
+          <h2 className="dashboard-card__title">Bookings</h2>
         </div>
+
         <div className="table-responsive">
           <table className="table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Booking ID</th>
                 <th>Customer</th>
                 <th>Trip Details</th>
                 <th>Travelers</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Date Booked</th>
+                <th>Room</th>
+                <th>Txn ID</th>
+                <th>Bank Txn ID</th>
+                <th>Txn Amount</th>
+                <th>Type</th>
+                <th>Gateway</th>
+                <th>Bank</th>
+                <th>Mode</th>
+                <th>Refund Amt</th>
+                <th>Refund</th>
+                <th>Txn Date</th>
+                <th>Txn Time</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_BOOKINGS.map((booking) => (
-                <tr key={booking.id}>
-                  <td>{booking.id}</td>
-                  <td>
-                    <div className="table__wrap">
-                      <span className="table__title">
-                        {booking.customer.name}
+              {bookings?.map((booking) => {
+                const status = getStatusLabel(booking.resultStatus);
+                return (
+                  <tr key={booking.id}>
+                    <td>
+                      #BK-{booking.id.slice(0, 4).toUpperCase()}-
+                      {booking.id.slice(4, 8).toUpperCase()}-
+                      {booking.bookingno.toString().padStart(4, "0")}
+                    </td>
+                    <td>
+                      <div className="table-info">
+                        <img
+                          className="round"
+                          src={
+                            booking.user.avatarUrl
+                              ? `${import.meta.env.VITE_API_URL}/images/${booking.user.avatarUrl}`
+                              : "/avatars/user.png"
+                          }
+                          alt={booking.user.fullName}
+                        />
+                        <div>
+                          <div className="table__title">
+                            {booking.user.fullName}
+                          </div>
+                          <div className="table__subtitle">
+                            {booking.user.email}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="table__wrap">
+                        <span className="table__title">
+                          {booking.trip.tripName}
+                        </span>
+                        <span className="table__subtitle">
+                          {booking.trip.destination}
+                        </span>
+                      </div>
+                    </td>
+                    <td>{booking.adults} Pax</td>
+                    <td className="table__amount">
+                      ₹{Number(booking.amount).toLocaleString("en-IN")}
+                    </td>
+                    <td>
+                      <span
+                        className={`status-badge status-badge--${status.class}`}
+                      >
+                        {status.text}
                       </span>
-                      <span className="table__subtitle">
-                        {booking.customer.email}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="table__wrap">
-                      <span className="table__title">{booking.trip.title}</span>
-                      <span className="table__subtitle">
-                        {booking.trip.dates}
-                      </span>
-                    </div>
-                  </td>
-                  <td>{booking.travelers} Pax</td>
-                  <td className="table__amount">{booking.totalAmount}</td>
-                  <td>
-                    <span
-                      className={`status-badge status-badge--${booking.status.toLowerCase()}`}
-                    >
-                      {booking.status}
-                    </span>
-                  </td>
-                  <td className="table__date">{booking.dateBooked}</td>
-                </tr>
-              ))}
+                    </td>
+                    <td>{booking.roomtype}</td>
+                    <td className="text-xs font-mono">
+                      {booking.txnId || "—"}
+                    </td>
+                    <td className="text-xs font-mono">
+                      {booking.bankTxnId || "—"}
+                    </td>
+                    <td>{booking.txnAmount ? `₹${booking.txnAmount}` : "—"}</td>
+                    <td>{booking.txnType || "—"}</td>
+                    <td>{booking.gatewayName || "—"}</td>
+                    <td>{booking.bankName || "—"}</td>
+                    <td>{booking.paymentMode || "—"}</td>
+                    <td>{booking.refundAmt ? `₹${booking.refundAmt}` : "—"}</td>
+                    <td>
+                      {booking.resultStatus == "TXN_CANCELLED" ? (
+                        <span
+                          className={`status-badge ${booking.refunded ? "status-badge--paid" : "status-badge--cancelled"}`}
+                          onClick={() => {
+                            if (!booking.refunded) {
+                              if (confirm("Mark this booking as refunded?")) {
+                                markAsRefunded.mutate({
+                                  bookingId: booking.id,
+                                });
+                              }
+                            }
+                          }}
+                        >
+                          {booking.refunded ? "YES" : "NO"}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="table__date">
+                      {booking.txnDate ? formatDate(booking.txnDate) : "—"}
+                    </td>
+                    <td className="table__date">
+                      {booking.txnDate ? formatTime(booking.txnDate) : "—"}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+
         <footer className="dashboard-card__pagination">
-          <span className="pagination-info">Showing 1-5 of 48 bookings</span>
+          <span className="pagination-info">
+            Showing {totalItems > 0 ? `${startRange}-${endRange}` : "0"} of{" "}
+            {totalItems} bookings
+          </span>
 
           <div className="pagination-controls">
-            <button className="btn btn--disabled">Previous</button>
-            <button className="btn">Next</button>
+            <button
+              className={`btn ${page === 1 ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <button
+              className={`btn ${page >= totalPages ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              Next
+            </button>
           </div>
         </footer>
       </div>
     </>
   );
 };
+
 export default BookingsTable;

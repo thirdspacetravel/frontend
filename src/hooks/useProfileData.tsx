@@ -1,11 +1,16 @@
 import { useState, useMemo, useEffect } from "react";
 import { trpc } from "../trpc";
 import type { User } from "../../../backend/src/generated/prisma/browser";
+type FormDataType = Omit<
+  User,
+  "id" | "createdAt" | "updatedAt" | "passwordHash"
+>;
 
-const DEFAULT_FORM_DATA = {
+const DEFAULT_FORM_DATA: FormDataType = {
   email: "",
   alternateEmail: null,
   status: "PENDING_VERIFICATION",
+  upiId: null,
   fullName: "",
   dateOfBirth: null,
   gender: null,
@@ -23,10 +28,10 @@ const DEFAULT_FORM_DATA = {
   zipCode: null,
   receiveTripUpdates: true,
   receivePromoEmails: false,
-} as const;
+};
 
 export const useProfileData = () => {
-  const utils = trpc.useUtils(); // Used to invalidate cache after save
+  const utils = trpc.useUtils();
 
   const { data, isLoading, isError, refetch } = trpc.user.getMe.useQuery(
     undefined,
@@ -36,18 +41,11 @@ export const useProfileData = () => {
     },
   );
 
-  // 1. Define the mutation
   const updateProfile = trpc.user.updateMe.useMutation({
     onSuccess: () => {
-      // Refresh the 'getMe' data so the UI stays in sync with the server
       utils.user.getMe.invalidate();
     },
   });
-
-  type FormDataType = Omit<
-    User,
-    "id" | "createdAt" | "updatedAt" | "passwordHash"
-  >;
 
   const formatForInput = (date: string | null) => {
     return date ? new Date(date) : null;
@@ -80,7 +78,6 @@ export const useProfileData = () => {
     }));
   };
 
-  // 2. The Save Function
   const save = async () => {
     try {
       await updateProfile.mutateAsync({
@@ -94,7 +91,7 @@ export const useProfileData = () => {
       });
     } catch (error) {
       console.error("Failed to save profile:", error);
-      throw error; // Re-throw so the UI can handle the error (e.g., toast notification)
+      throw error;
     }
   };
 

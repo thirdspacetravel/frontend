@@ -3,6 +3,8 @@ import TourSummary from "../sections/TourSummarySection"; // Assuming this still
 import { CustomDropdown, SuffixInput, TextInput } from "../utils/InputUtils";
 import Button from "../utils/Button";
 import type { TripDetails } from "../../admin/components/trips/types";
+import { trpc } from "../../trpc";
+import { useNavigate } from "react-router";
 
 const formatTripDates = (start: Date | null, end: Date | null) => {
   if (!start || !end) return "Dates TBD";
@@ -33,7 +35,27 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
   const charges = [trip.priceQuad, trip.priceTriple, trip.priceDouble];
   const [passengers, setPassengers] = useState(2);
   const [tripRoom, setRoom] = useState(1);
+  const navigate = useNavigate();
 
+  // 1. Define the mutation
+  const bookingMutation = trpc.user.initializePayment.useMutation({
+    onSuccess: (data) => {
+      console.log("Booking created:", data.bookingId);
+      navigate(`/mock-paytm/${data.bookingId}`);
+    },
+    onError: (error) => {
+      alert(`Booking failed: ${error.message}`);
+    },
+  });
+
+  const handleBooking = async () => {
+    if (bookingMutation.isPending) return;
+    bookingMutation.mutate({
+      tripId: trip.id,
+      roomType: tripRoom,
+      adults: passengers,
+    });
+  };
   return (
     <section className="booking-card">
       <div className="booking-card__container">
@@ -125,7 +147,13 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
                 />
               </div>
 
-              <Button solid>Secure Your Spot</Button>
+              <Button
+                solid
+                onClick={handleBooking}
+                disabled={bookingMutation.isPending}
+              >
+                {bookingMutation.isPending ? "Securing..." : "Secure Your Spot"}
+              </Button>
             </form>
 
             <div className="booking-sidebar__summary">

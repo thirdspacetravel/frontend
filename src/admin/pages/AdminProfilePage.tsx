@@ -1,6 +1,5 @@
-import { NavLink, useOutletContext } from "react-router";
+import { useOutletContext } from "react-router";
 import MenuIcon from "../../icons/MenuIcon";
-import NotificationIcon from "../../icons/NotificationIcon";
 import AdminProfile from "../components/profile/AdminProfile";
 interface ContextType {
   toggle: () => void;
@@ -18,12 +17,6 @@ const AdminProfilePage = () => {
           </div>
           <h2 className="layout-header__title">Profile</h2>
         </div>
-
-        <NavLink to={"/admin/notifications"}>
-          <div className="layout-header__actions">
-            <NotificationIcon />
-          </div>
-        </NavLink>
       </header>
       <div className="content">
         <AdminProfile />

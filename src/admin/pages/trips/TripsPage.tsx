@@ -1,6 +1,6 @@
 import { NavLink, useOutletContext } from "react-router";
 import MenuIcon from "../../../icons/MenuIcon";
-import NotificationIcon from "../../../icons/NotificationIcon";
+import UsersIcon from "../../../icons/UsersIcon";
 import TripsTable from "../../components/tables/TripsTable";
 interface ContextType {
   toggle: () => void;
@@ -18,9 +18,9 @@ const TripsPage = () => {
           </div>
           <h2 className="layout-header__title">Trips</h2>
         </div>
-        <NavLink to={"/admin/notifications"}>
+        <NavLink to={"/admin/profile"}>
           <div className="layout-header__actions">
-            <NotificationIcon />
+            <UsersIcon />
           </div>
         </NavLink>
       </header>

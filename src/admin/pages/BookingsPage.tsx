@@ -1,6 +1,6 @@
 import { NavLink, useOutletContext } from "react-router";
 import MenuIcon from "../../icons/MenuIcon";
-import NotificationIcon from "../../icons/NotificationIcon";
+import UsersIcon from "../../icons/UsersIcon";
 import BookingsTable from "../components/tables/BookingsTable";
 
 interface ContextType {
@@ -20,9 +20,9 @@ const BookingsPage = () => {
           <h2 className="layout-header__title">Bookings</h2>
         </div>
 
-        <NavLink to={"/admin/notifications"}>
+        <NavLink to={"/admin/profile"}>
           <div className="layout-header__actions">
-            <NotificationIcon />
+            <UsersIcon />
           </div>
         </NavLink>
       </header>

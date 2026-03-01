@@ -182,3 +182,50 @@
         }
     }
 }
+
+.verify-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: themify(bg-base);
+
+    .verify-card {
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        max-width: 400px;
+        text-align: center;
+        width: 100%;
+
+        svg {
+            margin-bottom: 10px;
+
+            &.verify-icon {
+                width: 60px;
+                height: 60px;
+                color: #27ae60;
+                stroke-width: 0.5px;
+            }
+
+            &.error-icon {
+                width: 60px;
+                height: 60px;
+                color: #c0392b;
+                stroke-width: 0.5px;
+            }
+        }
+
+        h2 {
+            color: themify(text-main);
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: themify(text-muted);
+            margin-bottom: 20px;
+        }
+    }
+}

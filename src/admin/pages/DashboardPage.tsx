@@ -1,7 +1,7 @@
 import { NavLink, useOutletContext } from "react-router";
 import MenuIcon from "../../icons/MenuIcon";
-import NotificationIcon from "../../icons/NotificationIcon";
 import DashboardContainer from "../components/dashboard/DashboardContainer";
+import UsersIcon from "../../icons/UsersIcon";
 
 interface ContextType {
   toggle: () => void;
@@ -19,9 +19,9 @@ const DashboardPage = () => {
           <h2 className="layout-header__title">Dashboard Overview</h2>
         </div>
 
-        <NavLink to={"/admin/notifications"}>
+        <NavLink to={"/admin/profile"}>
           <div className="layout-header__actions">
-            <NotificationIcon />
+            <UsersIcon />
           </div>
         </NavLink>
       </header>

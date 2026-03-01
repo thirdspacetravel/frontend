@@ -1,9 +1,10 @@
-import React from "react";
-import { CustomDropdown } from "../utils/InputUtils";
+import React, { useState, type ChangeEvent, type FormEvent } from "react";
 import Button from "../utils/Button";
 import MailIcon from "../../icons/MailIcon";
 import PhoneIcon from "../../icons/PhoneIcon";
 import ChatIcon from "../../icons/ChatIcon";
+import { EnquiryType } from "../../../../backend/src/generated/prisma/browser";
+import { trpc } from "../../trpc";
 
 interface ContactCardProps {
   label: string;
@@ -43,11 +44,47 @@ const ContactCard: React.FC<ContactCardProps> = ({
   </div>
 );
 export const ContactSection: React.FC = () => {
-  const roomOptions = [
-    { label: "Standard Room", value: 1 },
-    { label: "Deluxe Mountain View", value: 2 },
-    { label: "Presidential Suite", value: 3 },
-  ];
+  const createEnquiryMutation = trpc.public.createEnquiry.useMutation({
+    onSuccess: () => {
+      alert("Enquiry submitted successfully!");
+    },
+    onError: (error) => {
+      alert(
+        error.message || "Failed to submit enquiry. Please try again later.",
+      );
+    },
+  });
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setFormData({
+      fullName: "",
+      email: "",
+      subject: "",
+      message: "",
+    });
+    createEnquiryMutation.mutate({
+      fullName: formData.fullName,
+      email: formData.email,
+      message: formData.message,
+      subject: formData.subject,
+      type: EnquiryType.CONTACT,
+    });
+  };
   return (
     <section className="contact-section">
       <div className="contact-section__container">
@@ -75,7 +112,7 @@ export const ContactSection: React.FC = () => {
             actionType="email"
           />
         </div>
-        <form className="enquiry-form" onSubmit={(e) => e.preventDefault()}>
+        <form className="enquiry-form" onSubmit={handleSubmit}>
           <header className="enquiry-form__header">
             <h2 className="enquiry-form__title">Send an Enquiry</h2>
             <p className="enquiry-form__subtitle">
@@ -89,25 +126,36 @@ export const ContactSection: React.FC = () => {
               type="text"
               id="fullName"
               name="fullName"
+              value={formData.fullName}
               placeholder="Enter your name"
               required
+              onChange={handleChange}
             />
           </div>
 
           <div className="input__field">
-            <label htmlFor="phoneNumber">Phone Number</label>
-            <div className="input-prefix">
-              <span className="prefix">+91</span>
-              <input type="tel" id="phoneNumber" name="phoneNumber" required />
-            </div>
+            <label htmlFor="email">Email</label>
+            <input
+              type="text"
+              id="email"
+              value={formData.email}
+              name="email"
+              placeholder="yourname@gmail.com"
+              required
+              onChange={handleChange}
+            />
           </div>
 
           <div className="input__field">
-            <label htmlFor="tripInterest">Trip Interest</label>
-
-            <CustomDropdown
-              options={roomOptions}
-              onSelect={(val) => console.log(val)}
+            <label htmlFor="subject">Subject</label>
+            <input
+              type="text"
+              id="subject"
+              value={formData.subject}
+              name="subject"
+              placeholder="Enter subject of your enquiry"
+              required
+              onChange={handleChange}
             />
           </div>
 
@@ -116,10 +164,15 @@ export const ContactSection: React.FC = () => {
             <textarea
               id="message"
               name="message"
+              value={formData.message}
               placeholder="Tell us more about your travel plans..."
+              required
+              onChange={handleChange}
             />
           </div>
-          <Button solid>Send Enquiry</Button>
+          <Button solid onClick={handleSubmit}>
+            Send Enquiry
+          </Button>
         </form>
       </div>
     </section>

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "../../components/utils/Button";
+import InteractiveButton from "../../components/utils/InteractiveButton";
 import GoogleIcon from "../../icons/GoogleIcon";
 import MailIcon from "../../icons/MailIcon";
 import LockIcon from "../../icons/LockIcon";
 import { trpc } from "../../trpc";
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -20,9 +21,9 @@ const Login: React.FC = () => {
       alert(err.message);
     },
   });
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({
+    await loginMutation.mutateAsync({
       email,
       password,
     });
@@ -30,14 +31,24 @@ const Login: React.FC = () => {
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (authResponse) => {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/users/auth/google`,
-        {
-          code: authResponse.code,
-        },
-        { withCredentials: true },
-      );
-      navigate("/");
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/users/auth/google`,
+          {
+            code: authResponse.code,
+          },
+          { withCredentials: true },
+        );
+        navigate("/");
+      } catch (err) {
+        const axiosError = err as AxiosError<{ message: string }>;
+        const errorMessage =
+          axiosError.response?.data?.message || "An unexpected error occurred";
+        alert(errorMessage);
+      }
+    },
+    onError: (err) => {
+      alert("Google login failed: " + err);
     },
     flow: "auth-code",
   });
@@ -54,7 +65,7 @@ const Login: React.FC = () => {
           </p>
         </header>
 
-        <form className="auth-card__form" onSubmit={handleSignIn}>
+        <form className="auth-card__form">
           <div className="form-field">
             <label htmlFor="email" className="form-field__label">
               Email address
@@ -100,7 +111,9 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          <Button solid>Sign In</Button>
+          <InteractiveButton onClick={handleSignIn} solid>
+            Sign In
+          </InteractiveButton>
         </form>
 
         <div className="auth-card__divider">

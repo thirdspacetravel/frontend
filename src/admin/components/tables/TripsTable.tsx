@@ -71,6 +71,7 @@ const TripsTable: React.FC = () => {
                 <th>Trip Id</th>
                 <th>Duration</th>
                 <th>Starting Price</th>
+                <th>Seats Booked</th>
                 <th>Start Date</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -119,9 +120,15 @@ const TripsTable: React.FC = () => {
                       </td>
 
                       <td>
-                        <span className="price-tag">₹{trip.priceQuad}</span>
+                        <span className="price-tag">
+                          {trip.priceQuad ? `₹${trip.priceQuad}` : "TBD"}
+                        </span>
                       </td>
-
+                      <td>
+                        {trip.totalSeats
+                          ? `${trip.bookedSeats}/${trip.totalSeats}`
+                          : "TBD"}
+                      </td>
                       <td>
                         <span>
                           {trip.startDateTime
@@ -141,20 +148,28 @@ const TripsTable: React.FC = () => {
                       </td>
 
                       <td>
-                        <button
-                          className="action-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteTripMutation.mutate({ id: trip.id });
-                          }}
-                          disabled={deleteTripMutation.isPending}
-                        >
-                          {isDeletingThisTrip ? (
-                            <Spinner size={16} strokeWidth={1} />
-                          ) : (
-                            <TrashIcon color="red" />
-                          )}
-                        </button>
+                        {trip.status === "DRAFT" && (
+                          <button
+                            className="action-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (
+                                confirm(
+                                  "Are you sure you want to delete this Trip?",
+                                )
+                              ) {
+                                deleteTripMutation.mutate({ id: trip.id });
+                              }
+                            }}
+                            disabled={deleteTripMutation.isPending}
+                          >
+                            {isDeletingThisTrip ? (
+                              <Spinner size={16} strokeWidth={1} />
+                            ) : (
+                              <TrashIcon color="red" />
+                            )}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

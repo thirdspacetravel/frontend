@@ -7,37 +7,36 @@ import RupeeIcon from "../../../icons/RupeeIcon";
 import CalendarIcon from "../../../icons/CalendarIcon";
 import GlobeIcon from "../../../icons/GlobeIcon";
 import UsersIcon from "../../../icons/UsersIcon";
-const statsData: StatItem[] = [
-  {
-    label: "Total Revenue",
-    value: "₹12,45,000",
-    trend: "+12.5% from last month",
-    trendType: "up",
-    icon: <RupeeIcon />,
-  },
-  {
-    label: "Active Bookings",
-    value: "45",
-    trend: "+4 new today",
-    trendType: "up",
-    icon: <CalendarIcon />,
-  },
-  {
-    label: "Upcoming Trips",
-    value: "8",
-    trend: "Next: Spiti Valley (Feb 15)",
-    trendType: "neutral",
-    icon: <GlobeIcon />,
-  },
-  {
-    label: "Total Customers",
-    value: "1,240",
-    trend: "+28 this month",
-    trendType: "up",
-    icon: <UsersIcon />,
-  },
-];
+import { trpc } from "../../../trpc";
 const DashboardContainer = () => {
+  const { data: stats, isLoading } = trpc.public.fetchStats.useQuery();
+  if (isLoading) return <div>Loading stats...</div>;
+  const statsData: StatItem[] = [
+    {
+      label: "Total Revenue",
+      value:
+        stats?.totalRevenue.toLocaleString("en-IN", {
+          style: "currency",
+          currency: "INR",
+        }) || "₹0",
+      icon: <RupeeIcon />,
+    },
+    {
+      label: "Active Bookings",
+      value: stats?.totalBookings || 0,
+      icon: <CalendarIcon />,
+    },
+    {
+      label: "Upcoming Trips",
+      value: stats?.totalTrips || 0,
+      icon: <GlobeIcon />,
+    },
+    {
+      label: "Total Customers",
+      value: stats?.totalUsers || 0,
+      icon: <UsersIcon />,
+    },
+  ];
   return (
     <>
       <div className="stats-grid">

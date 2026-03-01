@@ -93,11 +93,17 @@ $status-colors: (
     "closed": (bg: #f1f5f9, text: #475569),
     "paid": (bg: #dcfce7, text: #166534),
     "active": (bg: #dcfce7, text: #166534),
+    "verified": (bg: #dcfce7, text: #166534),
+    "pending_verification": (bg: #f8fafc, text: #64748b),
     "inactive": (bg: #f1f5f9, text: #475569),
     "pending": (bg: #fef3c7, text: #111111),
     "cancelled": (bg: #fee2e2, text: #991b1b),
+    "suspended": (bg: #fee2e2, text: #991b1b),
+    "deleted": (bg: #fee2e2, text: #991b1b),
     "draft": (bg: #f8fafc, text: #64748b),
     "published": (bg: #dcfce7, text: #166534),
+    "accepted": (bg: #dcfce7, text: #166534),
+    "rejected": (bg: #fee2e2, text: #991b1b),
 );
 
 .status-badge {

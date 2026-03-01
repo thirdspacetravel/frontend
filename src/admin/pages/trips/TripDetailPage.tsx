@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOutletContext, useParams } from "react-router";
 import MenuIcon from "../../../icons/MenuIcon";
 import TripEditorForm, {
@@ -27,6 +27,17 @@ const TripDetailPage = () => {
       }),
     },
   );
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isDirty) {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
   if (fetchtripQuery.isLoading || !tripId)
     return <div>Loading trip details...</div>;
   if (fetchtripQuery.isError)

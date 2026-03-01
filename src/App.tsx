@@ -33,6 +33,8 @@ import AdminAuthGuard from "./admin/guards/AdminAuthGuard";
 import AdminLoginGuard from "./admin/guards/AdminLoginGuard";
 import LoginGuard from "./guards/LoginGuard";
 import AuthGuard from "./guards/AuthGuard";
+import MockPaytmPage from "./MockPaytmPage";
+import { VerifyEmail } from "./pages/VerifyMail";
 function App() {
   useSystemTheme();
   return (
@@ -45,7 +47,9 @@ function App() {
         </Route>
         <Route element={<AuthGuard />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/mock-paytm/:bookingId" element={<MockPaytmPage />} />
         </Route>
+        <Route path="/verify/:token" element={<VerifyEmail />} />
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/group-trips" element={<GroupTrips />} />

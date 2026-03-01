@@ -74,4 +74,9 @@
       }
     }
   }
+
+  textarea {
+    resize: vertical;
+    min-height: 200px;
+  }
 }

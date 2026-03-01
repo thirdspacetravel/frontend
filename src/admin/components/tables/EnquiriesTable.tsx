@@ -1,94 +1,39 @@
-import React from "react";
-import CalendarIcon from "../../../icons/CalendarIcon";
-import FilterIcon from "../../../icons/FilterIcon";
+import React, { useState } from "react";
 import SearchIcon from "../../../icons/SearchIcon";
 import { useNavigate } from "react-router";
-interface Enquiry {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-  };
-  enquiryDetails: {
-    tripName: string;
-    category: string;
-  };
-  pax: number;
-  status: "New" | "Contacted" | "Converted" | "Closed";
-  date: string;
-}
-
-const MOCK_ENQUIRIES: Enquiry[] = [
-  {
-    id: "ENQ-001",
-    customer: { name: "Priya Sharma", email: "priya.s@example.com" },
-    enquiryDetails: {
-      tripName: "Manali College Trip Request",
-      category: "Institutional",
-    },
-    pax: 45,
-    status: "New",
-    date: "Mar 12, 2024",
-  },
-  {
-    id: "ENQ-002",
-    customer: { name: "Rahul Verma", email: "rahul.verma@techcorp.in" },
-    enquiryDetails: {
-      tripName: "Corporate Retreat Inquiry",
-      category: "Corporate",
-    },
-    pax: 20,
-    status: "Contacted",
-    date: "Mar 11, 2024",
-  },
-  {
-    id: "ENQ-003",
-    customer: { name: "Aisha Khan", email: "aisha.k@delhiuniv.ac.in" },
-    enquiryDetails: {
-      tripName: "Kasol Trek Booking for Group",
-      category: "Group Trip",
-    },
-    pax: 12,
-    status: "Converted",
-    date: "Mar 10, 2024",
-  },
-  {
-    id: "ENQ-004",
-    customer: { name: "Vikram Singh", email: "vikram.singh@gmail.com" },
-    enquiryDetails: {
-      tripName: "Price Quote for Spiti Valley",
-      category: "Spiti Expedition",
-    },
-    pax: 5,
-    status: "New",
-    date: "Mar 09, 2024",
-  },
-  {
-    id: "ENQ-005",
-    customer: { name: "Sneha Gupta", email: "sneha.g@startup.io" },
-    enquiryDetails: {
-      tripName: "Offsite Planning - Goa",
-      category: "Corporate",
-    },
-    pax: 30,
-    status: "Closed",
-    date: "Mar 08, 2024",
-  },
-  {
-    id: "ENQ-006",
-    customer: { name: "Arjun Mehta", email: "arjun.m@freelance.com" },
-    enquiryDetails: {
-      tripName: "Solo Trip to Tirthan",
-      category: "Weekend Trip",
-    },
-    pax: 1,
-    status: "Contacted",
-    date: "Mar 07, 2024",
-  },
-];
-
+import { trpc } from "../../../trpc";
 const EnquiriesTable: React.FC = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+
+  // 1. Fetch Enquiries
+  const { data: enquiries, isLoading } = trpc.admin.fetchEnquiries.useQuery({
+    page,
+  });
+
+  // 2. Fetch Count for Pagination
+  const { data: countData } = trpc.admin.getEnquiriesCount.useQuery();
+  const LIMIT = 10;
+  const totalItems = countData?.total || 0;
+  const totalPages = countData?.totalPages || 1;
+  const startRange = (page - 1) * LIMIT + 1;
+  const endRange = Math.min(page * LIMIT, totalItems);
+  const formatDate = (date: Date | string) => {
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+  const formatTime = (date: Date | string) => {
+    return new Date(date).toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  if (isLoading) return <div>Loading enquiries...</div>;
   return (
     <>
       <header className="dashboard-header">
@@ -99,18 +44,6 @@ const EnquiriesTable: React.FC = () => {
             className="dashboard-header__search-input"
             placeholder="Search by ID, customer name..."
           />
-        </div>
-
-        <div className="dashboard-header__filters">
-          <button className="dashboard-header__filter-btn">
-            <FilterIcon />
-            <span>Status: All</span>
-          </button>
-
-          <button className="dashboard-header__filter-btn">
-            <CalendarIcon />
-            <span>Date Range</span>
-          </button>
         </div>
       </header>
       <div className="dashboard-card">
@@ -127,66 +60,90 @@ const EnquiriesTable: React.FC = () => {
                 <th>Group Size</th>
                 <th>Status</th>
                 <th>Enquiry Date</th>
+                <th>Enquiry Time</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_ENQUIRIES.map((enquiry) => (
+              {enquiries?.map((enquiry) => (
                 <tr
                   onClick={() => {
+                    // Navigate using the unique cuid
                     navigate(`/admin/enquiries/${enquiry.id}`);
                   }}
                   key={enquiry.id}
+                  style={{ cursor: "pointer" }}
                 >
-                  <td>#{enquiry.id}</td>
                   <td>
-                    <div className="table-info">
-                      <img
-                        className="round"
-                        src="https://placehold.co/100"
-                        alt=""
-                      />
-                      <div className="table__wrap">
-                        <span className="table__title">
-                          {enquiry.customer.name}
-                        </span>
-                        <span className="table__subtitle">
-                          {enquiry.customer.email}
-                        </span>
-                      </div>
-                    </div>
+                    #ENQ-{enquiry.id.slice(0, 4).toUpperCase()}-
+                    {enquiry.id.slice(4, 8).toUpperCase()}-
+                    {enquiry.enquiryNo.toString().padStart(4, "0")}
                   </td>
                   <td>
                     <div className="table__wrap">
                       <span className="table__title">
-                        {enquiry.enquiryDetails.tripName}
+                        {enquiry.fullName || enquiry.fullName}
                       </span>
                       <span className="table__subtitle">
-                        {enquiry.enquiryDetails.category}
+                        {enquiry.email || enquiry.email}
                       </span>
                     </div>
                   </td>
-                  <td>{enquiry.pax} Pax</td>
+                  <td>
+                    <div className="table__wrap">
+                      <span className="table__title">{enquiry.subject}</span>
+                      <span className="table__subtitle">
+                        {enquiry.destination || "N/A"}
+                      </span>
+                    </div>
+                  </td>
+                  <td>{enquiry.groupSize || "N/A"}</td>
                   <td>
                     <span
                       className={`status-badge status-badge--${enquiry.status.toLowerCase()}`}
                     >
-                      {enquiry.status}
+                      {enquiry.type == "CONTACT"
+                        ? enquiry.status == "NEW"
+                          ? enquiry.status
+                          : enquiry.status == "ACCEPTED"
+                            ? "REPLIED"
+                            : "NOT REPLIED"
+                        : enquiry.status}
                     </span>
                   </td>
-                  <td className="table__date">{enquiry.date}</td>
+                  <td className="table__date">
+                    {formatDate(new Date(enquiry.createdAt))}
+                  </td>
+                  <td className="table__date">
+                    {formatTime(new Date(enquiry.createdAt))}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {/* Updated Pagination Footer */}
         <footer className="dashboard-card__pagination">
           <span className="pagination-info">
-            Showing {MOCK_ENQUIRIES.length} enquiries
+            Showing {totalItems > 0 ? `${startRange}-${endRange}` : "0"} of{" "}
+            {totalItems} enquiries
           </span>
 
           <div className="pagination-controls">
-            <button className="btn btn--disabled">Previous</button>
-            <button className="btn">Next</button>
+            <button
+              className={`btn ${page === 1 ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <button
+              className={`btn ${page >= totalPages ? "btn--disabled" : ""}`}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              Next
+            </button>
           </div>
         </footer>
       </div>

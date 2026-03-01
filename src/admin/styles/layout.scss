@@ -259,6 +259,7 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
                     font-size: 13px;
                     font-weight: 500;
                     padding: 12px 24px;
+                    text-align: center;
                 }
 
                 &__customer-info {
@@ -288,6 +289,7 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
                         font-size: 14px;
                         vertical-align: middle;
                         white-space: nowrap;
+                        text-align: center;
 
                         .empty-state {
                             display: flex;
@@ -304,6 +306,7 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
                     display: flex;
                     align-items: center;
                     gap: 16px;
+                    text-align: left;
 
                     img {
                         width: 50px;

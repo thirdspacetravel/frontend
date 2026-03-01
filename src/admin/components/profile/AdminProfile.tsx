@@ -1,8 +1,8 @@
 import AdminInfoCard from "./AdminInfoCard";
-import TeamMembersSection from "./TeamMembersSection";
-import CompanyDetailsForm from "./CompanyDetailsForm";
-import NotificationPreferences from "./NotificationPreferences";
-import InviteTeamMemberForm from "./InviteTeamMemberForm";
+// import TeamMembersSection from "./TeamMembersSection";
+// import CompanyDetailsForm from "./CompanyDetailsForm";
+// import NotificationPreferences from "./NotificationPreferences";
+// import InviteTeamMemberForm from "./InviteTeamMemberForm";
 import { trpc } from "../../../trpc/index";
 const ProfileContent = () => {
   const adminQuery = trpc.admin.getMe.useQuery();
@@ -19,15 +19,15 @@ const ProfileContent = () => {
       <div className="profile__container">
         <div className="profile__main">
           <AdminInfoCard admin={admin} />
-          <CompanyDetailsForm />
+          {/* <CompanyDetailsForm /> */}
         </div>
-        <div className="profile__sidebar">
+        {/* <div className="profile__sidebar">
           <TeamMembersSection />
           <NotificationPreferences admin={admin} />
-        </div>
-        <div className="add-member-wrapper">
+        </div> */}
+        {/* <div className="add-member-wrapper">
           <InviteTeamMemberForm />
-        </div>
+        </div> */}
       </div>
     </>
   );

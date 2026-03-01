@@ -100,9 +100,9 @@ const ProfileInfo: React.FC = () => {
         </div>
         <AvatarUpload
           imageUrl={
-            formData.avatarUrl === ""
-              ? `/avatars/user.png`
-              : `${import.meta.env.VITE_API_URL}/images/${formData.avatarUrl}`
+            formData.avatarUrl
+              ? `${import.meta.env.VITE_API_URL}/images/${formData.avatarUrl}`
+              : `/avatars/user.png`
           }
           onUploadSuccess={(filename) => {
             handleChange("avatarUrl", filename);
@@ -237,6 +237,13 @@ const ProfileInfo: React.FC = () => {
               }}
             />
           </DropDownWrapper>
+          <TextInput
+            label="UPI ID"
+            name="upiId"
+            type="text"
+            value={formData.upiId || ""}
+            onChange={handleInputChange}
+          />
         </div>
       </div>
       <div className="profile-content">

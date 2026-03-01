@@ -298,6 +298,7 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
             &__actions {
                 display: flex;
                 justify-content: flex-end;
+                gap: 8px;
             }
         }
 

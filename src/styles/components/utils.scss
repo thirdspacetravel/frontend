@@ -355,6 +355,16 @@
             background-color: themify(action-danger-hover);
         }
     }
+
+    &.btn--accept {
+        background-color: themify(action-success);
+        color: themify(text-action-primary);
+        border: 0;
+
+        &:hover {
+            background-color: themify(action-success-hover);
+        }
+    }
 }
 
 .spinner-wrapper {
