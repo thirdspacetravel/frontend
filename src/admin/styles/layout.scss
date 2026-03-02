@@ -397,6 +397,16 @@ $box-shadow: 0px 0px 40px -5px rgba(0, 0, 0, 0.05);
     .custom-select__header {
         padding: 10px;
     }
+
+    .loading-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        font-size: 16px;
+        color: themify(text-muted);
+    }
 }
 
 .auth-guard-container {

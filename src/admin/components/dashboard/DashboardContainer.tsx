@@ -10,7 +10,7 @@ import UsersIcon from "../../../icons/UsersIcon";
 import { trpc } from "../../../trpc";
 const DashboardContainer = () => {
   const { data: stats, isLoading } = trpc.public.fetchStats.useQuery();
-  if (isLoading) return <div>Loading stats...</div>;
+  if (isLoading) return <div className="loading-wrapper">Loading stats...</div>;
   const statsData: StatItem[] = [
     {
       label: "Total Revenue",

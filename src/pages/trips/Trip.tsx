@@ -3,6 +3,7 @@ import BookingCard from "../../components/cards/BookingCard";
 import QuickFacts from "../../components/cards/QuickFactsCard";
 import TripDetails from "../../components/trip/TripDetails";
 import { trpc } from "../../trpc";
+import Spinner from "../../components/utils/Spinner";
 
 const Trip = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -24,8 +25,18 @@ const Trip = () => {
     },
   );
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error || !trip) return <div>Trip not found. {tripId}</div>;
+  if (isLoading)
+    return (
+      <div className="booking-card__loader">
+        <Spinner size={50} strokeWidth={2} />
+      </div>
+    );
+  if (error || !trip)
+    return (
+      <div className="booking-card__loader">
+        <p>Trip not found. {tripId}</p>
+      </div>
+    );
 
   return (
     <>

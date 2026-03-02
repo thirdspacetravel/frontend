@@ -136,6 +136,25 @@
         justify-content: flex-end;
         gap: 12px;
     }
+
+    &__loader {
+        width: 100%;
+        height: calc(100vh - 104px);
+        background: themify(bg-surface);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @include mq("tablet") {
+            height: calc(100vh - 64px);
+        }
+
+        p {
+            height: 100%;
+            font-size: 16px;
+            color: themify(text-error);
+        }
+    }
 }
 
 .booking-sidebar {
@@ -186,6 +205,11 @@
         font-size: 14px;
         color: themify(text-muted);
         text-align: center;
+
+        .btn {
+            margin: 0 auto;
+            margin-top: 10px;
+        }
     }
 }
 

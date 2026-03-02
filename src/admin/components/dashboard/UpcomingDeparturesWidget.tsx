@@ -24,7 +24,9 @@ const UpcomingDeparturesWidget: React.FC = () => {
       },
     );
   if (isLoading)
-    return <div className="empty-state">Loading upcoming departures...</div>;
+    return (
+      <div className="loading-wrapper">Loading upcoming departures...</div>
+    );
   return (
     <div className="dashboard-card">
       <div className="dashboard-card__header">

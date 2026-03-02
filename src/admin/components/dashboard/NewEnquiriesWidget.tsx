@@ -15,7 +15,8 @@ const NewEnquiriesWidget: React.FC = () => {
         })),
     },
   );
-  if (isLoading) return <div className="empty-state">Loading enquiries...</div>;
+  if (isLoading)
+    return <div className="loading-wrapper">Loading enquiries...</div>;
   return (
     <div className="dashboard-card">
       <div className="dashboard-card__header">

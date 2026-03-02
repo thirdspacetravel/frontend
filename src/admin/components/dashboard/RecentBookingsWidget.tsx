@@ -37,7 +37,8 @@ const RecentBookingsWidget: React.FC = () => {
           })),
       },
     );
-  if (isBookingsLoading) return <div>Loading bookings...</div>;
+  if (isBookingsLoading)
+    return <div className="loading-wrapper">Loading bookings...</div>;
   return (
     <div className="dashboard-card">
       <div className="dashboard-card__header">
