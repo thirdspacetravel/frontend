@@ -11,6 +11,12 @@ const Home = () => {
         title="Space to Pause. Time to Connect."
         subtitle="The pause between routine and responsibility."
         imageSrc="./herosection/herosection1.jpg"
+        featureList={[
+          "Fixed Departures",
+          "Pickup & Drop from Chandigarh",
+          "26-Member Curated Groups",
+          "No Hidden Costs",
+        ]}
       />
       <WhatIsThirdSpace />
       <TripsSection />

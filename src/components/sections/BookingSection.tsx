@@ -94,7 +94,11 @@ const BookingSection: React.FC = () => {
                 ? `${trip.days}D/${trip.nights}N`
                 : "TBD",
             tags: categories.length > 0 ? categories : ["Adventure"],
-            price: trip.priceQuad ? trip.priceQuad.toLocaleString() : "0",
+            price: (
+              [trip.priceQuad, trip.priceTriple, trip.priceDouble].find(
+                (price) => price !== null,
+              ) || 0
+            ).toLocaleString("en-IN", { style: "currency", currency: "INR" }),
           };
         }),
     },

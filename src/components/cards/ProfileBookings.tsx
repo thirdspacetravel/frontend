@@ -110,9 +110,13 @@ const MyBookings: React.FC = () => {
       </header>
 
       <div className="bookings-list">
-        {MOCK_BOOKINGS.map((booking) => (
+        {/* {MOCK_BOOKINGS.map((booking) => (
           <BookingCard key={booking.id} booking={booking} />
-        ))}
+        ))} */}
+        <p className="no-bookings">
+          You have no bookings yet. Start exploring and book your next
+          adventure!
+        </p>
       </div>
     </div>
   );

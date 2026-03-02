@@ -121,7 +121,18 @@ const TripsTable: React.FC = () => {
 
                       <td>
                         <span className="price-tag">
-                          {trip.priceQuad ? `₹${trip.priceQuad}` : "TBD"}
+                          {trip.priceQuad && `₹${trip.priceQuad}`}
+                          {!trip.priceQuad &&
+                            trip.priceTriple &&
+                            `₹${trip.priceTriple}`}
+                          {!trip.priceQuad &&
+                            !trip.priceTriple &&
+                            trip.priceDouble &&
+                            `₹${trip.priceDouble}`}
+                          {!trip.priceQuad &&
+                            !trip.priceTriple &&
+                            !trip.priceDouble &&
+                            "TBD"}
                         </span>
                       </td>
                       <td>

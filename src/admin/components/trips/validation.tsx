@@ -12,7 +12,7 @@ export const validateTripForPublishing = (
 ): ValidationResult => {
   const errors: string[] = [];
 
-  // 1. Check required strings for empty values or default filler text
+  // 1. Check required strings for empty values
   const requiredStrings: (keyof TripDetails)[] = [
     "tripName",
     "destination",
@@ -25,16 +25,8 @@ export const validateTripForPublishing = (
 
   requiredStrings.forEach((field) => {
     const value = trip[field];
-    if (
-      value === null ||
-      value === undefined ||
-      value === "" ||
-      value === "" ||
-      value === "" ||
-      value === "" ||
-      value === ""
-    ) {
-      errors.push(`${field} is missing, empty, or has placeholder text.`);
+    if (value === null || value === undefined || value === "") {
+      errors.push(`${field} is missing or empty.`);
     }
   });
 
@@ -43,7 +35,6 @@ export const validateTripForPublishing = (
     "days",
     "nights",
     "totalSeats",
-    "priceDouble", // Assuming at least one price type is mandatory
   ];
 
   requiredNumbers.forEach((field) => {
@@ -67,6 +58,18 @@ export const validateTripForPublishing = (
   } else if (new Date(trip.startDateTime) >= new Date(trip.endDateTime)) {
     errors.push("End date must be after the start date.");
   }
+
+  // --- UPDATED VALIDATION: Check that at least one price is not null ---
+  if (
+    trip.priceQuad === null &&
+    trip.priceTriple === null &&
+    trip.priceDouble === null
+  ) {
+    errors.push(
+      "At least one pricing option (Quad, Triple, or Double) must be provided.",
+    );
+  }
+  // ---------------------------------------------------------------------
 
   return {
     isValid: errors.length === 0,

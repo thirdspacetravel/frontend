@@ -9,7 +9,12 @@ interface FactItem {
 
 const QuickFacts: React.FC = () => {
   const facts: FactItem[] = [
-    { id: "1", label: "Group Size", value: "Max 16 People", iconType: "group" },
+    {
+      id: "1",
+      label: "Group Size",
+      value: "Fixed Group Size",
+      iconType: "group",
+    },
     { id: "2", label: "Stay", value: "Premium Boutique", iconType: "stay" },
     {
       id: "3",

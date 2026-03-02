@@ -51,13 +51,12 @@
     &__content {
         width: 100%;
         height: 100%;
-        max-width: 1280px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: start;
+        align-items: center;
+        text-align: center;
         gap: 16px;
-        font-family: 'Inter', serif;
 
         .hero__title {
             font-size: 70px;
@@ -77,27 +76,18 @@
 
     // Features Bar
     &__features {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: grid;
+        // This creates a responsive grid that automatically fits items
+        // and changes columns based on available space (min 200px per item)
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px; // Replaces justify-content/gap for spacing
         padding-bottom: 20px;
 
         .feature-tag {
             display: flex;
             align-items: center;
             gap: 16px;
-
-            &__icon-box {
-                width: 30px;
-                height: 30px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
-                backdrop-filter: blur(2px);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
+            justify-content: center;
 
             &__label {
                 font-size: 12px;

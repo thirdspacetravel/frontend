@@ -59,7 +59,7 @@ const TripCard = ({
         <footer className="trip-card__footer">
           <div className="trip-card__price-box">
             <span className="trip-card__price-label">Starting from</span>
-            <span className="trip-card__price-value">₹{trip.price}</span>
+            <span className="trip-card__price-value">{trip.price}</span>
           </div>
           <Button solid onClick={onClick}>
             View Details

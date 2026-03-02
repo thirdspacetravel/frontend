@@ -145,6 +145,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    flex: 1;
+    justify-content: center;
 
     &__pricing {
         display: flex;
@@ -178,6 +180,12 @@
         small {
             font-weight: 400;
         }
+    }
+
+    &__unavailable {
+        font-size: 14px;
+        color: themify(text-muted);
+        text-align: center;
     }
 }
 

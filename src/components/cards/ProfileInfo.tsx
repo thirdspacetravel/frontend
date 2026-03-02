@@ -28,6 +28,9 @@ const validateAltEmail = (
   email: string,
   primaryEmail: string,
 ): { isValid: boolean; error: string } => {
+  if (email.trim() === "") {
+    return { isValid: true, error: "" };
+  }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
@@ -251,13 +254,22 @@ const ProfileInfo: React.FC = () => {
           <h1>Address</h1>
         </div>
 
-        <TextInput
-          label="Street Address"
-          name="streetAddress"
-          placeholder="e.g. 123 Main St, Apt 4B"
-          value={formData.streetAddress || ""}
-          onChange={handleInputChange}
-        />
+        <div className="grid-2-col">
+          <TextInput
+            label="Street Address"
+            name="streetAddress"
+            placeholder="e.g. 123 Main St, Apt 4B"
+            value={formData.streetAddress || ""}
+            onChange={handleInputChange}
+          />
+          <TextInput
+            label="Zip Code"
+            name="zipCode"
+            placeholder="e.g. 123456"
+            value={formData.zipCode || ""}
+            onChange={handleInputChange}
+          />
+        </div>
 
         <div className="grid-3-col">
           <DropDownWrapper label="City">
