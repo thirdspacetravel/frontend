@@ -4,6 +4,7 @@ import ArrowRight from "../../icons/ArrowRightIcon";
 import Button from "../utils/Button";
 import TripCard, { type TripData } from "../cards/TripCard";
 import { trpc } from "../../trpc";
+import Spinner from "../utils/Spinner";
 const TripsSection: React.FC = () => {
   const navigate = useNavigate();
   const { data: TRIPS = [], isLoading } = trpc.public.fetchLiveTrips.useQuery(
@@ -54,7 +55,6 @@ const TripsSection: React.FC = () => {
         }),
     },
   );
-  if (isLoading) return <div></div>;
   return (
     <section className="trips-section">
       <div className="trips-section__container">
@@ -66,15 +66,28 @@ const TripsSection: React.FC = () => {
         </header>
 
         <div className="trips-section__grid">
-          {TRIPS.map((trip) => (
-            <TripCard
-              key={trip.id}
-              trip={trip}
-              onClick={() => {
-                navigate(`/trip/${trip.id}`);
-              }}
+          {isLoading ? (
+            <Spinner
+              size={40}
+              strokeWidth={2}
+              trackColor="transparent"
+              color="#333"
             />
-          ))}
+          ) : TRIPS.length > 0 ? (
+            TRIPS.map((trip) => (
+              <TripCard
+                key={trip.id}
+                trip={trip}
+                onClick={() => {
+                  navigate(`/trip/${trip.id}`);
+                }}
+              />
+            ))
+          ) : (
+            <div className="empty-state">
+              <p>No Trips Yet.</p>
+            </div>
+          )}
         </div>
 
         <div className="trips-section__actions">

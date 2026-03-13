@@ -50,33 +50,23 @@ const CustomersTable: React.FC = () => {
         <div className="dashboard-card__header">
           <h2 className="dashboard-card__title">Customers</h2>
         </div>
-
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Location</th>
-                <th>Joined Date</th>
-                <th>Bookings</th>
-                <th>Total Spent</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
+        {users.length > 0 ? (
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
                 <tr>
-                  <td
-                    colSpan={6}
-                    style={{ textAlign: "center", padding: "2rem" }}
-                  >
-                    <Spinner size={24} />
-                  </td>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Location</th>
+                  <th>Joined Date</th>
+                  <th>Bookings</th>
+                  <th>Total Spent</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ) : users.length > 0 ? (
-                users.map((user) => {
+              </thead>
+              <tbody>
+                {users.map((user) => {
                   const isDeleting =
                     deleteUserMutation.isPending &&
                     deleteUserMutation.variables?.id === user.id;
@@ -166,19 +156,19 @@ const CustomersTable: React.FC = () => {
                       </td>
                     </tr>
                   );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={6}>
-                    <div className="empty-state">
-                      <p>No customers found.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="empty-state">
+            {isLoading ? (
+              <Spinner size={20} strokeWidth={1} />
+            ) : (
+              <p>No customers found.</p>
+            )}
+          </div>
+        )}
 
         <footer className="dashboard-card__pagination">
           <span className="pagination-info">

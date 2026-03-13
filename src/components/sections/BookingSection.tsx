@@ -8,6 +8,7 @@ import TripCard, { type TripData } from "../cards/TripCard";
 import { trpc } from "../../trpc";
 import { useNavigate } from "react-router";
 import LocationIcon from "../../icons/LocationIcon";
+import Spinner from "../utils/Spinner";
 // The shape of your Prisma model
 interface FilterOption {
   label: string;
@@ -103,7 +104,6 @@ const BookingSection: React.FC = () => {
         }),
     },
   );
-  if (isLoading) return <div></div>;
   return (
     <section className="trips-section booking-section">
       <div className="trips-section__container">
@@ -130,15 +130,28 @@ const BookingSection: React.FC = () => {
           <Button solid>Filter</Button>
         </div>
         <div className="trips-section__grid">
-          {TRIPS.map((trip_item) => (
-            <TripCard
-              key={trip_item.id}
-              trip={trip_item}
-              onClick={() => {
-                navigate(`/trip/${trip_item.id}`);
-              }}
+          {isLoading ? (
+            <Spinner
+              size={40}
+              strokeWidth={2}
+              trackColor="transparent"
+              color="#333"
             />
-          ))}
+          ) : TRIPS.length > 0 ? (
+            TRIPS.map((trip) => (
+              <TripCard
+                key={trip.id}
+                trip={trip}
+                onClick={() => {
+                  navigate(`/trip/${trip.id}`);
+                }}
+              />
+            ))
+          ) : (
+            <div className="empty-state">
+              <p>No Trips Yet.</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

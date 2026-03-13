@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import SearchIcon from "../../../icons/SearchIcon";
 import { useNavigate } from "react-router";
 import { trpc } from "../../../trpc";
+import Spinner from "../../../components/utils/Spinner";
 const EnquiriesTable: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
   // 1. Fetch Enquiries
-  const { data: enquiries, isLoading } = trpc.admin.fetchEnquiries.useQuery({
-    page,
-  });
+  const { data: enquiries = [], isLoading } =
+    trpc.admin.fetchEnquiries.useQuery({
+      page,
+    });
 
   // 2. Fetch Count for Pagination
   const { data: countData } = trpc.admin.getEnquiriesCount.useQuery();
@@ -32,8 +34,6 @@ const EnquiriesTable: React.FC = () => {
       second: "2-digit",
     });
   };
-
-  if (isLoading) return <div>Loading enquiries...</div>;
   return (
     <>
       <header className="dashboard-header">
@@ -50,77 +50,87 @@ const EnquiriesTable: React.FC = () => {
         <div className="dashboard-card__header">
           <h2 className="dashboard-card__title">Recent Enquiries</h2>
         </div>
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Enquiry Details</th>
-                <th>Group Size</th>
-                <th>Status</th>
-                <th>Enquiry Date</th>
-                <th>Enquiry Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {enquiries?.map((enquiry) => (
-                <tr
-                  onClick={() => {
-                    // Navigate using the unique cuid
-                    navigate(`/admin/enquiries/${enquiry.id}`);
-                  }}
-                  key={enquiry.id}
-                  style={{ cursor: "pointer" }}
-                >
-                  <td>
-                    #ENQ-{enquiry.id.slice(0, 4).toUpperCase()}-
-                    {enquiry.id.slice(4, 8).toUpperCase()}-
-                    {enquiry.enquiryNo.toString().padStart(4, "0")}
-                  </td>
-                  <td>
-                    <div className="table__wrap">
-                      <span className="table__title">
-                        {enquiry.fullName || enquiry.fullName}
-                      </span>
-                      <span className="table__subtitle">
-                        {enquiry.email || enquiry.email}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="table__wrap">
-                      <span className="table__title">{enquiry.subject}</span>
-                      <span className="table__subtitle">
-                        {enquiry.destination || "N/A"}
-                      </span>
-                    </div>
-                  </td>
-                  <td>{enquiry.groupSize || "N/A"}</td>
-                  <td>
-                    <span
-                      className={`status-badge status-badge--${enquiry.status.toLowerCase()}`}
-                    >
-                      {enquiry.type == "CONTACT"
-                        ? enquiry.status == "NEW"
-                          ? enquiry.status
-                          : enquiry.status == "ACCEPTED"
-                            ? "REPLIED"
-                            : "NOT REPLIED"
-                        : enquiry.status}
-                    </span>
-                  </td>
-                  <td className="table__date">
-                    {formatDate(new Date(enquiry.createdAt))}
-                  </td>
-                  <td className="table__date">
-                    {formatTime(new Date(enquiry.createdAt))}
-                  </td>
+        {enquiries.length > 0 ? (
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Customer</th>
+                  <th>Enquiry Details</th>
+                  <th>Group Size</th>
+                  <th>Status</th>
+                  <th>Enquiry Date</th>
+                  <th>Enquiry Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {enquiries.map((enquiry) => (
+                  <tr
+                    onClick={() => {
+                      // Navigate using the unique cuid
+                      navigate(`/admin/enquiries/${enquiry.id}`);
+                    }}
+                    key={enquiry.id}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>
+                      #ENQ-{enquiry.id.slice(0, 4).toUpperCase()}-
+                      {enquiry.id.slice(4, 8).toUpperCase()}-
+                      {enquiry.enquiryNo.toString().padStart(4, "0")}
+                    </td>
+                    <td>
+                      <div className="table__wrap">
+                        <span className="table__title">
+                          {enquiry.fullName || enquiry.fullName}
+                        </span>
+                        <span className="table__subtitle">
+                          {enquiry.email || enquiry.email}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="table__wrap">
+                        <span className="table__title">{enquiry.subject}</span>
+                        <span className="table__subtitle">
+                          {enquiry.destination || "N/A"}
+                        </span>
+                      </div>
+                    </td>
+                    <td>{enquiry.groupSize || "N/A"}</td>
+                    <td>
+                      <span
+                        className={`status-badge status-badge--${enquiry.status.toLowerCase()}`}
+                      >
+                        {enquiry.type == "CONTACT"
+                          ? enquiry.status == "NEW"
+                            ? enquiry.status
+                            : enquiry.status == "ACCEPTED"
+                              ? "REPLIED"
+                              : "NOT REPLIED"
+                          : enquiry.status}
+                      </span>
+                    </td>
+                    <td className="table__date">
+                      {formatDate(new Date(enquiry.createdAt))}
+                    </td>
+                    <td className="table__date">
+                      {formatTime(new Date(enquiry.createdAt))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="empty-state">
+            {isLoading ? (
+              <Spinner size={20} strokeWidth={1} />
+            ) : (
+              <p>No enquiries found.</p>
+            )}
+          </div>
+        )}
 
         {/* Updated Pagination Footer */}
         <footer className="dashboard-card__pagination">

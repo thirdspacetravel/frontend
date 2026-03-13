@@ -1,43 +1,9 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import TourSummary from "../sections/TourSummarySection";
-import { CustomDropdown, SuffixInput, TextInput } from "../utils/InputUtils";
 import Button from "../utils/Button";
 import type { TripDetails } from "../../admin/components/trips/types";
-import { trpc } from "../../trpc";
 import { useNavigate } from "react-router";
-// 1. Define types for Paytm and your backend response
-declare global {
-  interface Window {
-    Paytm?: {
-      CheckoutJS: {
-        onLoad: (callback: () => void) => void;
-        init: (config: PaytmConfig) => Promise<void>;
-        invoke: () => void;
-      };
-    };
-  }
-}
 
-interface PaytmConfig {
-  root: string;
-  flow: string;
-  data: {
-    orderId: string;
-    token: string;
-    tokenType: string;
-    amount: string;
-  };
-  handler: {
-    notifyMerchant: (eventName: string, data: any) => void;
-  };
-}
-
-interface PaymentResponse {
-  orderId: string;
-  txnToken: string;
-  amount: string;
-  mid: string;
-}
 const formatTripDates = (start: Date | null, end: Date | null) => {
   if (!start || !end) return "Dates TBD";
   const options: Intl.DateTimeFormatOptions = {
