@@ -14,7 +14,7 @@ const Home = () => {
         featureList={[
           "Fixed Departures",
           "Pickup & Drop from Chandigarh",
-          "26-Member Curated Groups",
+          "15-Member Curated Groups",
           "No Hidden Costs",
         ]}
       />

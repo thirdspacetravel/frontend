@@ -68,8 +68,10 @@ textarea {
 
 section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     padding: 80px 40px;
+    gap: 30px;
 
     @include mq("mobile") {
         padding: 60px 20px !important;

@@ -1,26 +1,41 @@
-import React from 'react';
+import React from "react";
 
 const WHY_US_FEATURES = [
   {
-    title: "Fixed group size",
-    description: "Curated, smaller groups so it never feels overcrowded or chaotic."
+    title: "4-Star Premium Stays",
+    description:
+      "Accommodation in carefully selected four-star properties ensuring professional hospitality, security, and a relaxed environment.",
   },
   {
-    title: "Verified stays & transport",
-    description: "We only work with vetted hotels, homestays, and local transport partners."
+    title: "Quality Buffet Meals",
+    description:
+      "Hygienic, top-quality breakfast and dinner served at the property to eliminate food stress and uncertainty.",
   },
   {
-    title: "Clear itineraries",
-    description: "Transparent plans, policies, and expectations shared before you book."
+    title: "State-of-the-Art Urbania Tempo Traveller",
+    description:
+      "Superior seating comfort and spacious interiors for smooth long-distance rides starting right from Chandigarh.",
   },
   {
-    title: "On-ground coordinator",
-    description: "A dedicated trip coordinator to handle logistics while you unwind."
+    title: "Curated Group Energy",
+    description:
+      "Fixed, structured group departures that ensure balanced sizes, organized coordination, and community without overcrowding.",
   },
   {
-    title: "Transparent inclusions",
-    description: "No hidden costs — know exactly what’s included and what isn’t."
-  }
+    title: "Safety & Security — Priority First",
+    description:
+      "Verified stays and trusted partners providing a secure environment for female solo travelers, students, and young professionals.",
+  },
+  {
+    title: "Experiential & Mindful Travel",
+    description:
+      "Intentional pacing and balanced itineraries that allow for exploration and reflection rather than a rushed schedule.",
+  },
+  {
+    title: "Clear & Transparent Pricing",
+    description:
+      "Full transparency with all inclusions, exclusions, and policies defined upfront—no hidden costs or surprises.",
+  },
 ];
 
 const WhyTravel: React.FC = () => {
@@ -30,7 +45,7 @@ const WhyTravel: React.FC = () => {
         <header className="benefits__header">
           <h2 className="benefits__title">Why Travel With Us?</h2>
           <p className="benefits__subtitle">
-            Thoughtfully designed group trips with clarity, comfort, and care at the center.
+            {`Thoughtfully designed group departures from Chandigarh — built on comfort, clarity, and security. We combine premium infrastructure with mindful travel design, so your trip feels organized, elevated, and meaningful — not rushed or chaotic.`}
           </p>
         </header>
 

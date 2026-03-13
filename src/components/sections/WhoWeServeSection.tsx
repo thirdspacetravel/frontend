@@ -7,35 +7,47 @@ interface ServiceItem {
   img: string;
 }
 
+interface ServiceItem {
+  id: number;
+  title: string;
+  description: string;
+  img: string;
+}
+
 const SERVICES_DATA: ServiceItem[] = [
   {
     id: 1,
     title: "Colleges & Universities",
-    description: "Department trips, fests, and society bondings.",
+    description:
+      "Department tours, industrial visits, cultural immersions, and structured academic programs.",
     img: "colleges-and-universities.jpg",
   },
   {
     id: 2,
     title: "Schools",
-    description: "Safe excursions and nature camps for juniors.",
+    description:
+      "Supervised educational excursions, nature camps, and curriculum-linked exposure trips.",
     img: "schools.jpg",
   },
   {
     id: 3,
     title: "Coaching Institutes",
-    description: "Stress-buster retreats for competitive aspirants.",
+    description:
+      "Structured stress-relief retreats and focus-reset programs for competitive aspirants.",
     img: "coaching-institutes.jpg",
   },
   {
     id: 4,
     title: "Student Societies",
-    description: "Leadership camps and team-building offsites.",
+    description:
+      "Leadership offsites, bonding retreats, and experiential group programs.",
     img: "student-societies.jpg",
   },
   {
     id: 5,
     title: "Faculty Retreats",
-    description: "Leisure and planning trips for staff.",
+    description:
+      "Planning retreats, annual faculty offsites, and structured leisure programs.",
     img: "faculty-retreats.jpg",
   },
 ];

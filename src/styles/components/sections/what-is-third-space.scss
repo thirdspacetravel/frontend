@@ -1,69 +1,126 @@
 @use "../../base/tokens" as *;
 @use "../../base/breakpoints" as *;
 
+// Variables
+$color-navy: #0F172A;
+$color-slate: #94A3B8;
+$color-muted-grey: #61625D;
+$bg-light: #F1F5F9;
+$font-family: 'Jost', sans-serif;
+
 .third-space {
   background-color: themify(bg-base);
 
   &__container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    text-align: center;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     max-width: 1280px;
     gap: 40px;
+  }
 
-    @include mq("tablet") {
-      flex-direction: column;
-      text-align: center;
+  &__headline {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: themify(text-main);
+    margin: 0 0 12px 0;
+  }
+
+  &__subheadline {
+    font-size: 20px;
+    color: themify(text-muted);
+    line-height: 1.6;
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 880px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: center;
     }
   }
 
-  &__content {
+  &__footer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    flex: 1;
-    gap: 22px;
+    gap: 24px;
+    margin-top: 20px;
+  }
 
-    @include mq("tablet") {
-      align-items: center;
+  &__transition {
+    font-size: 18px;
+    font-weight: 500;
+    color: themify(text-muted);
+  }
+
+  &__main-callout {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: themify(text-main);
+    margin: 0;
+  }
+
+  &__details {
+    color: $color-slate;
+    font-size: 20px;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .text-highlight {
+      color: $color-slate;
+      font-weight: 500;
     }
+  }
+}
+
+.space-card {
+  flex: 1;
+  background: $bg-light;
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &__icon-box {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $color-navy;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   &__title {
-    margin: 0;
-    color: themify(text-main);
-    font-size: 48px;
+    font-size: 22px;
     font-weight: 700;
-    line-height: 1.1;
-
-    @include mq("mobile") {
-      font-size: 36px;
-    }
+    color: $color-navy;
+    margin: 0 0 8px 0;
   }
 
   &__description {
+    font-size: 16px;
+    color: $color-slate;
+    line-height: 1.5;
     margin: 0;
-    color: themify(text-muted);
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.6;
-    max-width: 600px;
-  }
-
-  &__image-wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  &__image {
-    width: 100%;
-    max-width: 624px;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0px 20px 40px -12px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
   }
 }

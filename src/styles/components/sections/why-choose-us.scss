@@ -76,6 +76,27 @@
       line-height: 1.5;
       margin: 0;
     }
+
+    &__list {
+      list-style: none;
+    }
+
+    &__list-item {
+      font-size: 0.85rem;
+      color: themify(text-muted);
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+
+      &::before {
+        content: "•";
+        color: themify(bg-secondary);
+        font-weight: bold;
+        display: inline-block;
+        width: 1em;
+        margin-left: 0;
+      }
+    }
   }
 
   @include mq("xl-mobile") {

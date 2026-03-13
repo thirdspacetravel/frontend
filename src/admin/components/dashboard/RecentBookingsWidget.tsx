@@ -17,7 +17,7 @@ const getStatusLabel = (status: string) => {
 };
 const RecentBookingsWidget: React.FC = () => {
   const navigate = useNavigate();
-  const { data: bookings, isLoading: isBookingsLoading } =
+  const { data: bookings = [], isLoading: isBookingsLoading } =
     trpc.admin.fetchBookings.useQuery(
       { page: 1 },
       {
@@ -51,39 +51,45 @@ const RecentBookingsWidget: React.FC = () => {
         </button>
       </div>
       <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Trip</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings?.map((b) => (
-              <tr key={b.id}>
-                <td>
-                  <div className="table__wrap">
-                    <span className="table__title">{b.customerName}</span>
-                    <span className="table__subtitle">{b.customerEmail}</span>
-                  </div>
-                </td>
-                <td>{b.tripName}</td>
-                <td className="table__date">{b.date}</td>
-                <td>{b.amount}</td>
-                <td>
-                  <span
-                    className={`status-badge status-badge--${b.status.class}`}
-                  >
-                    {b.status.text}
-                  </span>
-                </td>
+        {bookings.length > 0 ? (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Trip</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {bookings.map((b) => (
+                <tr key={b.id}>
+                  <td>
+                    <div className="table__wrap">
+                      <span className="table__title">{b.customerName}</span>
+                      <span className="table__subtitle">{b.customerEmail}</span>
+                    </div>
+                  </td>
+                  <td>{b.tripName}</td>
+                  <td className="table__date">{b.date}</td>
+                  <td>{b.amount}</td>
+                  <td>
+                    <span
+                      className={`status-badge status-badge--${b.status.class}`}
+                    >
+                      {b.status.text}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="empty-state">
+            <p>No recent bookings found.</p>
+          </div>
+        )}
       </div>
     </div>
   );

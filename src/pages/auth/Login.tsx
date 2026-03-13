@@ -54,91 +54,99 @@ const Login: React.FC = () => {
   });
   return (
     <main className="auth-page">
-      <div className="auth-card">
-        <header className="auth-card__header">
-          <h1 className="auth-card__logo" onClick={() => navigate("/")}>
-            THIRD SPACE TRAVEL
-          </h1>
-          <h2 className="auth-card__title">Welcome back</h2>
-          <p className="auth-card__subtitle">
-            Enter your credentials to access your account
-          </p>
-        </header>
-
-        <form className="auth-card__form">
-          <div className="form-field">
-            <label htmlFor="email" className="form-field__label">
-              Email address
-            </label>
-            <div className="form-field__input-wrapper">
-              <MailIcon />
-              <input
-                id="email"
-                type="email"
-                placeholder="email@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-field">
-            <div className="form-field__label-row">
-              <label htmlFor="password" className="form-field__label">
-                Password
-              </label>
-              <a
-                href="/forgot-password"
-                title="Recover Password"
-                className="form-field__link"
-              >
-                Forgot password?
-              </a>
-            </div>
-            <div className="form-field__input-wrapper">
-              <LockIcon />
-              <input
-                id="password"
-                type="password"
-                placeholder="password"
-                autoComplete="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <InteractiveButton onClick={handleSignIn} solid>
-            Sign In
-          </InteractiveButton>
-        </form>
-
-        <div className="auth-card__divider">
-          <span className="auth-card__divider-text">Or</span>
+      <div className="auth-wrapper">
+        <div className="img-container">
+          <img src="/images/login.jpg" alt="Third Space Travel" />
         </div>
+        <div className="auth-card">
+          <header className="auth-card__header">
+            <h1 className="auth-card__logo" onClick={() => navigate("/")}>
+              THIRD SPACE TRAVEL
+            </h1>
+            <h2 className="auth-card__title">Welcome back</h2>
+            <p className="auth-card__subtitle">
+              Enter your credentials to access your account
+            </p>
+          </header>
 
-        <Button className="login-with-google" onClick={() => loginWithGoogle()}>
-          <GoogleIcon />
-          <span>continue with Google</span>
-        </Button>
+          <form className="auth-card__form">
+            <div className="form-field">
+              <label htmlFor="email" className="form-field__label">
+                Email address
+              </label>
+              <div className="form-field__input-wrapper">
+                <MailIcon />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="email@example.com"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <footer className="auth-card__footer">
-          <p>
-            Don't have an account?{" "}
-            <button
-              onClick={() => {
-                navigate("/register");
-              }}
-              type="button"
-              className="text-btn"
-            >
-              Sign Up
-            </button>
-          </p>
-        </footer>
+            <div className="form-field">
+              <div className="form-field__label-row">
+                <label htmlFor="password" className="form-field__label">
+                  Password
+                </label>
+                <a
+                  href="/forgot-password"
+                  title="Recover Password"
+                  className="form-field__link"
+                >
+                  Forgot password?
+                </a>
+              </div>
+              <div className="form-field__input-wrapper">
+                <LockIcon />
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="password"
+                  autoComplete="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <InteractiveButton onClick={handleSignIn} solid>
+              Sign In
+            </InteractiveButton>
+          </form>
+
+          <div className="auth-card__divider">
+            <span className="auth-card__divider-text">Or</span>
+          </div>
+
+          <Button
+            className="login-with-google"
+            onClick={() => loginWithGoogle()}
+          >
+            <GoogleIcon />
+            <span>continue with Google</span>
+          </Button>
+
+          <footer className="auth-card__footer">
+            <p>
+              Don't have an account?{" "}
+              <button
+                onClick={() => {
+                  navigate("/register");
+                }}
+                type="button"
+                className="text-btn"
+              >
+                Sign Up
+              </button>
+            </p>
+          </footer>
+        </div>
       </div>
     </main>
   );
