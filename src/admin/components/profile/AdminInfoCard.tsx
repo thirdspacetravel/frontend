@@ -101,6 +101,7 @@ const AdminInfoCard = ({ admin }: { admin: AdminUser | undefined }) => {
             label="Password"
             id="password"
             type="password"
+            autoComplete="new-password"
             value={formData.password}
             onChange={handleChange}
             placeholder="Leave blank to keep current"

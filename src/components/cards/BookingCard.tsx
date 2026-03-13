@@ -3,6 +3,7 @@ import TourSummary from "../sections/TourSummarySection";
 import Button from "../utils/Button";
 import type { TripDetails } from "../../admin/components/trips/types";
 import { useNavigate } from "react-router";
+import Slideshow from "../utils/SlideShow";
 
 const formatTripDates = (start: Date | null, end: Date | null) => {
   if (!start || !end) return "Dates TBD";
@@ -63,14 +64,10 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
             features={trip.categories.join(" • ")}
           />
           <div className="booking-card__gallery">
-            <img
-              className="booking-card__hero"
-              src={
-                trip.images[0]
-                  ? `${import.meta.env.VITE_API_URL}/images/${trip.images[0]}`
-                  : "https://placehold.co/845x360"
-              }
-              alt={trip.tripName}
+            <Slideshow
+              images={trip.images.map(
+                (img) => `${import.meta.env.VITE_API_URL}/images/${img}`,
+              )}
             />
           </div>
         </div>

@@ -8,8 +8,8 @@ const Home = () => {
   return (
     <>
       <HeroSection
-        title="Space to Pause. Time to Connect."
-        subtitle="The pause between routine and responsibility."
+        title="Travel with Strangers. Return with Stories."
+        subtitle="Weekend adventures, backpacking trips, and unforgettable travel experiences with a community of like-minded explorers."
         imageSrc="./herosection/herosection1.jpg"
         featureList={[
           "Fixed Departures",

@@ -29,7 +29,7 @@ const TripsTable: React.FC = () => {
     await createTripMutation.mutateAsync();
   };
   // Fetch paginated data
-  const { data: trips = [] } = trpc.admin.fetchTrips.useQuery({
+  const { data: trips = [], isLoading } = trpc.admin.fetchTrips.useQuery({
     page,
   });
 
@@ -63,23 +63,23 @@ const TripsTable: React.FC = () => {
           </InteractiveButton>
         </div>
 
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Trip Name</th>
-                <th>Trip Id</th>
-                <th>Duration</th>
-                <th>Starting Price</th>
-                <th>Seats Booked</th>
-                <th>Start Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trips.length > 0 ? (
-                trips.map((trip) => {
+        {trips.length > 0 ? (
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Trip Name</th>
+                  <th>Trip Id</th>
+                  <th>Duration</th>
+                  <th>Starting Price</th>
+                  <th>Seats Booked</th>
+                  <th>Start Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trips.map((trip) => {
                   const tripImages = trip.images || JSON.parse("[]"); // Handle JSON string if not auto-parsed
                   const isDeletingThisTrip =
                     deleteTripMutation.isPending &&
@@ -184,23 +184,19 @@ const TripsTable: React.FC = () => {
                       </td>
                     </tr>
                   );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={6}>
-                    <div className="empty-state">
-                      <p>No trips found.</p>
-                      <p>
-                        It looks like there are no trips scheduled at the
-                        moment.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="empty-state">
+            {isLoading ? (
+              <Spinner size={20} strokeWidth={1} />
+            ) : (
+              <p>No trips found.</p>
+            )}
+          </div>
+        )}
         <footer className="dashboard-card__pagination">
           <span className="pagination-info">
             Showing {totalItems > 0 ? `${startRange}-${endRange}` : "0"} of{" "}

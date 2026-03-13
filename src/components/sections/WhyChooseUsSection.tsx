@@ -5,7 +5,6 @@ import UsersIcon from "../../icons/UsersIcon";
 import DollarMoneyIcon from "../../icons/DollarMoneyIcon";
 
 interface FeatureItem {
-  id: number;
   title: string;
   description: string;
   details: string[]; // Added this for the list items
@@ -14,7 +13,6 @@ interface FeatureItem {
 
 const FEATURES: FeatureItem[] = [
   {
-    id: 1,
     title: "Structured Documentation",
     description:
       "Full administrative support for seamless institutional approvals.",
@@ -27,7 +25,6 @@ const FEATURES: FeatureItem[] = [
     icon: <DocumentIcon />,
   },
   {
-    id: 2,
     title: "Safety-First Approach",
     description:
       "Zero-compromise safety protocols for every student departure.",
@@ -40,7 +37,6 @@ const FEATURES: FeatureItem[] = [
     icon: <SecurityIcon />,
   },
   {
-    id: 3,
     title: "Faculty Coordination",
     description: "Tailored logistics to respect faculty roles and comfort.",
     details: [
@@ -52,7 +48,6 @@ const FEATURES: FeatureItem[] = [
     icon: <UsersIcon />,
   },
   {
-    id: 4,
     title: "Transparent Costing",
     description:
       "Honest, fixed pricing with no surprises for the accounts team.",
@@ -78,25 +73,23 @@ const WhyChooseUs: React.FC = () => {
         </header>
 
         <div className="benefits-section__grid">
-          {FEATURES.map((feature) => (
-            <>
-              <div key={feature.id} className="feature-card">
-                <div className="feature-card__icon-bg">{feature.icon}</div>
-                <div className="feature-card__content">
-                  <h3 className="feature-card__title">{feature.title}</h3>
-                  <p className="feature-card__description">
-                    {feature.description}
-                  </p>
-                  <ul className="feature-card__list">
-                    {feature.details.map((item, index) => (
-                      <li key={index} className="feature-card__list-item">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          {FEATURES.map((feature, index) => (
+            <div key={index.toString()} className="feature-card">
+              <div className="feature-card__icon-bg">{feature.icon}</div>
+              <div className="feature-card__content">
+                <h3 className="feature-card__title">{feature.title}</h3>
+                <p className="feature-card__description">
+                  {feature.description}
+                </p>
+                <ul className="feature-card__list">
+                  {feature.details.map((item, index) => (
+                    <li key={index} className="feature-card__list-item">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </>
+            </div>
           ))}
         </div>
       </div>

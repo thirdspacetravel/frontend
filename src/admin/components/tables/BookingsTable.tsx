@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { trpc } from "../../../trpc";
 import SearchIcon from "../../../icons/SearchIcon";
+import Spinner from "../../../components/utils/Spinner";
 
 const BookingsTable: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -43,8 +44,6 @@ const BookingsTable: React.FC = () => {
       second: "2-digit",
     });
   };
-
-  if (isBookingsLoading) return <div>Loading bookings...</div>;
   const LIMIT = 10; // Should match your backend LIMIT
   const totalItems = countData?.total || 0;
   const totalPages = countData?.totalPages || 1;
@@ -196,7 +195,11 @@ const BookingsTable: React.FC = () => {
           </div>
         ) : (
           <div className="empty-state">
-            <p>No bookings found.</p>
+            {isBookingsLoading ? (
+              <Spinner size={20} strokeWidth={1} />
+            ) : (
+              <p>No bookings found.</p>
+            )}
           </div>
         )}
 

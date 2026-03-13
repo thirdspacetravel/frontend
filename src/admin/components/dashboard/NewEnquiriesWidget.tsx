@@ -22,7 +22,12 @@ const NewEnquiriesWidget: React.FC = () => {
     <div className="dashboard-card">
       <div className="dashboard-card__header">
         <h2 className="dashboard-card__title">New Enquiries</h2>
-        <button className="dashboard-card__link">View All</button>
+        <button
+          onClick={() => navigate("/admin/enquiries/")}
+          className="dashboard-card__link"
+        >
+          View All
+        </button>
       </div>
       <ul className="side-list">
         {enquiries.length > 0 ? (
