@@ -4,9 +4,8 @@ import Button from "./Button";
 
 const SUPPORT_LINKS = [
   { label: "Contact us", href: "/contact" },
-  { label: "Whatsapp", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "Ticketing", href: "#" },
+  { label: "Whatsapp", href: "https://wa.me/7719783377" },
+  { label: "Instagram", href: "https://www.instagram.com/thirdspace.travel" },
 ];
 
 const IMPORTANT_LINKS = [
@@ -37,7 +36,11 @@ const Footer: React.FC = () => {
                 <li key={link.label} className="footer__item">
                   <div
                     onClick={() => {
-                      navigate(link.href);
+                      if (link.href.startsWith("http")) {
+                        window.open(link.href, "_blank");
+                      } else {
+                        navigate(link.href);
+                      }
                     }}
                     className="footer__link"
                   >

@@ -1,0 +1,108 @@
+@use "../../base/tokens" as *;
+@use "../../base/breakpoints" as *;
+
+.testimonial-slider {
+    width: 100%;
+    padding: 80px 20px;
+    background: #ffffff;
+    overflow: hidden;
+
+    &__container {
+        position: relative;
+        max-width: 900px;
+        margin: 0 auto;
+        min-height: 400px; // Prevents layout jump during transitions
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__slide {
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    &__quote {
+        font-size: clamp(24px, 4vw, 40px);
+        line-height: 1.4;
+        color: themify(text-main);
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &__author {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__name {
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        color: themify(text-main);
+    }
+
+    &__title {
+        font-size: 14px;
+        color: themify(text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    &__nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 40px;
+        color: themify(text-muted);
+        cursor: pointer;
+        transition: color 0.2s;
+        padding: 10px;
+        z-index: 10;
+
+        &:hover {
+            color: themify(text-main);
+        }
+
+        &--prev {
+            left: -60px;
+        }
+
+        &--next {
+            right: -60px;
+        }
+
+        @media (max-width: 1024px) {
+            display: none; // Hide arrows on smaller screens, rely on dots
+        }
+    }
+
+    &__dots {
+        display: flex;
+        gap: 6px;
+        margin-top: 40px;
+    }
+
+    &__dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: none;
+        background: #E2E8F0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &--active {
+            background: #333;
+            width: 24px;
+            border-radius: 4px;
+        }
+    }
+}

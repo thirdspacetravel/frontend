@@ -2,7 +2,7 @@ import React from "react";
 import TourSummary from "../sections/TourSummarySection";
 import Button from "../utils/Button";
 import type { TripDetails } from "../../admin/components/trips/types";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import Slideshow from "../utils/SlideShow";
 
 const formatTripDates = (start: Date | null, end: Date | null) => {
@@ -27,7 +27,7 @@ const formatTripDates = (start: Date | null, end: Date | null) => {
 };
 
 const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // const allPackageOptions = [
   //   { label: "Quad Sharing", value: 1, price: trip.priceQuad },
   //   { label: "Triple Sharing", value: 2, price: trip.priceTriple },
@@ -159,7 +159,12 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
                   us directly to book your trip. We apologize for the
                   inconvenience and appreciate your understanding as we work to
                   bring you a seamless booking experience soon.
-                  <Button solid onClick={() => navigate("/contact")}>
+                  <Button
+                    solid
+                    onClick={() => {
+                      window.open(`https://wa.me/7719783377`, "_blank");
+                    }}
+                  >
                     Contact Us
                   </Button>
                 </div>

@@ -35,7 +35,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           } else if (actionType === "email") {
             window.location.href = `mailto:${value}`;
           } else if (actionType === "whatsapp") {
-            window.open(`https://wa.me/9876543210`, "_blank");
+            window.open(`https://wa.me/7719783377`, "_blank");
           }
         }}
       >
@@ -110,7 +110,7 @@ export const ContactSection: React.FC = () => {
           />
           <ContactCard
             label="Call Us"
-            value="+91 98765 43210"
+            value="+91 77197 83377"
             actionText="Call now"
             icon={<PhoneIcon />}
             actionType="call"

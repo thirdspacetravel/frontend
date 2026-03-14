@@ -10,23 +10,21 @@ const ArrowLeftIcon: React.FC<ArrowLeftIconProps> = ({
 }) => {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
-        d="M9.57 5.92999L3.5 12L9.57 18.07"
+        d="M6.38 3.95L2.33 8L6.38 12.05"
         stroke={color}
-        strokeWidth="1.5"
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M20.4999 12H3.66992"
+        d="M13.67 8H2.45"
         stroke={color}
-        strokeWidth="1.5"
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"

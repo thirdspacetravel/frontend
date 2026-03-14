@@ -6,6 +6,8 @@ import WhyTravel from "../components/sections/WhyTravelSection";
 import TripsSection from "../components/trip/TripsSection";
 import Button from "../components/utils/InteractiveButton";
 import ArrowRight from "../icons/ArrowRightIcon";
+import Testimonials from "../components/sections/Testimonials";
+import { TESTIMONIALS_DATA } from "./data";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ const Home = () => {
       <TripsSection />
       <WhyTravel />
       <InstitutionalCTA />
+      <Testimonials items={TESTIMONIALS_DATA} />
     </>
   );
 };
