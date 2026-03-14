@@ -5,6 +5,7 @@ import PhoneIcon from "../../icons/PhoneIcon";
 import ChatIcon from "../../icons/ChatIcon";
 import { EnquiryType } from "../../../../backend/src/generated/prisma/browser";
 import { trpc } from "../../trpc";
+import { useNotification } from "../../hooks/useNotification";
 
 interface ContactCardProps {
   label: string;
@@ -44,14 +45,24 @@ const ContactCard: React.FC<ContactCardProps> = ({
   </div>
 );
 export const ContactSection: React.FC = () => {
+  const { notify } = useNotification();
   const createEnquiryMutation = trpc.public.createEnquiry.useMutation({
     onSuccess: () => {
-      alert("Enquiry submitted successfully!");
+      notify("Enquiry submitted successfully!", "success");
     },
     onError: (error) => {
-      alert(
-        error.message || "Failed to submit enquiry. Please try again later.",
-      );
+      let errorMessage = "Failed to submit enquiry.";
+
+      try {
+        const errorData = JSON.parse(error.message);
+        if (typeof errorData === "object" && errorData !== null) {
+          errorMessage = Object.values(errorData).join("\n");
+        }
+      } catch (e) {
+        errorMessage = error.message || (e as string);
+      }
+
+      notify(errorMessage, "error");
     },
   });
 

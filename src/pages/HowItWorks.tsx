@@ -10,7 +10,7 @@ const HowItWorks = () => {
       <HeroSection
         title="Travel Without The Planning Headache"
         subtitle="From browsing your next adventure to returning home with stories, here is how we make group travel seamless for you."
-        imageSrc="./herosection/herosection4.jpg"
+        mediaSrc="./herosection/herosection4.jpg"
       />
       <ProcessSteps />
       <TrustBanner />

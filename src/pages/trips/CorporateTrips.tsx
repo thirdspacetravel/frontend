@@ -8,9 +8,9 @@ const CorporateTrips = () => {
   return (
     <>
       <HeroSection
-        title="CorporateTrips & Institutional Group Travel Solutions"
+        title="Corporate Trips & Institutional Group Travel Solutions"
         subtitle="We design safe, structured, and immersive travel experiences for students and faculty. Beyond tourism, towards learning."
-        imageSrc="./herosection/herosection3.jpg"
+        mediaSrc="./herosection/herosection3.jpg"
       />
       <WhoWeServe />
       <CuratedExperiences />

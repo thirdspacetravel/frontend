@@ -8,7 +8,8 @@ const About = () => {
       <HeroSection
         title="The Pause Between Routine & Responsibility"
         subtitle="Third Space Travel was created to offer structured, affordable, and meaningful group travel experiences for young India. We believe travel shouldn't be a checklist, but a space to breathe, connect, and reset."
-        imageSrc="./herosection/herosection5.jpg"
+        mediaSrc="./herosection/herosection5.mp4"
+        bgType="video"
       />
       <ValuesSection />
       <LocationSection />

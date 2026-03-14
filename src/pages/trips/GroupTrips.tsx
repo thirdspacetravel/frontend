@@ -8,7 +8,7 @@ const GroupTrips = () => {
       <HeroSection
         title="Upcoming Fixed-Departure Group Trips from Chandigarh"
         subtitle="Join like-minded travelers on curated journeys starting from the City Beautiful."
-        imageSrc="./herosection/herosection2.jpg"
+        mediaSrc="./herosection/herosection2.jpg"
       />
       <BookingSection />
       <InstitutionalCTA />

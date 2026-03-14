@@ -1,5 +1,6 @@
 @use "../base/tokens" as *;
 @use "../base/breakpoints" as *;
+@use "sass:map";
 
 .input {
     &__field {
@@ -404,5 +405,123 @@
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+$alert-themes: (
+    "info": (bg: #EAF3FF, text: #2D67B9),
+    "success": (bg: #E7F4EF, text: #168463),
+    "warning": (bg: #F8F0E1, text: #D97706),
+    "error": (bg: #FBECEE, text: #C81E1E)
+);
+
+.notification-area {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+}
+
+.toast {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: flex-end;
+    pointer-events: all;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+
+    &__icon-container {
+        flex-shrink: 0;
+        cursor: pointer;
+
+        svg {
+            width: 10px;
+            height: 10px;
+        }
+    }
+
+    &__content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-right: 20px;
+    }
+
+    &__message {
+        font-size: 14px;
+        line-height: 1.5;
+        font-weight: 400;
+        white-space: pre-line;
+
+        strong {
+            font-weight: 500;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    &__btn {
+        height: 40px;
+        padding: 0 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            opacity: 0.85;
+        }
+
+        &--confirm {
+            border: none;
+            color: white;
+        }
+
+        &--cancel {
+            background: transparent;
+        }
+    }
+
+    @each $name, $colors in $alert-themes {
+        &--#{$name} {
+            background-color: map.get($colors, bg);
+            color: map.get($colors, text);
+
+            .toast__btn--confirm {
+                background-color: map.get($colors, text);
+            }
+
+            .toast__btn--cancel {
+                border: 1px solid map.get($colors, text);
+                color: map.get($colors, text);
+            }
+        }
     }
 }

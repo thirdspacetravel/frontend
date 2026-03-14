@@ -193,7 +193,10 @@ const TripsTable: React.FC = () => {
             {isLoading ? (
               <Spinner size={20} strokeWidth={1} />
             ) : (
-              <p>No trips found.</p>
+              <>
+                <p>No trips found.</p>
+                <p>It looks like there are no trips scheduled at the moment.</p>
+              </>
             )}
           </div>
         )}
