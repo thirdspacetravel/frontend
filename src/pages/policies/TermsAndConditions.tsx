@@ -10,67 +10,64 @@ interface TermsSection {
 }
 
 const TermsAndConditions: React.FC = () => {
-  const lastUpdated = "January 15, 2024";
+  const lastUpdated = "March 15, 2026";
 
   const termsData: TermsSection[] = [
     {
       id: 1,
-      title: "1. Introduction",
+      title: "1. Booking & Eligibility",
       content: [
-        "Welcome to Third Space Travels. These Terms & Conditions govern your relationship with us when you book a trip or use our services. By booking a trip with Third Space, you agree to be bound by these terms.",
-        "Our trips are designed to provide a structured, safe, and enjoyable experience. We value transparency and mutual respect.",
+        "By booking a trip with Third Space Travel, you confirm that you are at least 18 years old or are traveling with valid parental/guardian consent.",
+        "Bookings are confirmed only after receipt of the required booking amount.",
       ],
     },
     {
       id: 2,
-      title: "2. Booking Policy",
+      title: "2. Payments",
       content: [
-        "To secure a spot, a non-refundable deposit is required at the time of booking. The remaining balance must be paid 15 days prior to departure.",
-      ],
-      list: [
-        "Bookings are confirmed only upon receipt of payment.",
-        "Late balance payments may result in cancellation without refund.",
-        "Valid identification (Aadhar, Passport) is mandatory.",
+        "Trips require payment of full payment. Failure to complete payment may result in cancellation of the booking.",
       ],
     },
     {
       id: 3,
-      title: "3. Cancellations & Refunds",
-      list: [
-        "30+ Days: 90% refund (excl. deposit)",
-        "15-29 Days: 50% refund",
-        "0-14 Days: No refund",
-      ],
+      title: "3. Group Travel Nature",
       content: [
-        "If Third Space cancels a trip due to unforeseen circumstances, a full refund or transfer will be offered.",
+        "Third Space Travel specializes in curated group experiences. Participants are expected to cooperate with trip captains and fellow travelers to maintain a safe and respectful environment.",
       ],
     },
     {
       id: 4,
-      title: "4. Code of Conduct",
+      title: "4. Trip Itinerary",
       content: [
-        "We have a zero-tolerance policy for harassment or dangerous behavior. The Trip Captain reserves the right to remove participants for safety risks without refund.",
+        "All itineraries are planned carefully; however, minor adjustments may occur due to weather, local conditions, safety considerations, or operational requirements.",
       ],
     },
     {
       id: 5,
-      title: "5. Limitation of Liability",
-      subtitle: "Third Space is not responsible for:",
+      title: "5. Traveler Responsibility",
+      subtitle: "Participants are responsible for:",
       list: [
-        "Personal injury or illness during the trip.",
-        "Loss or damage to personal property.",
-        "Itinerary changes due to weather or roadblocks.",
+        "Carrying valid identification",
+        "Following safety guidelines",
+        "Respecting local culture and regulations",
+        "Maintaining respectful behavior with other travelers",
       ],
       content: [
-        "We strongly recommend purchasing comprehensive travel insurance.",
+        "Any behavior that threatens safety or group harmony may result in removal from the trip without refund.",
       ],
     },
     {
       id: 6,
-      title: "6. Contact Us",
-      isContact: true,
+      title: "6. Liability",
       content: [
-        "If you have questions or need to initiate a cancellation, contact us immediately:",
+        "Third Space Travel acts as a trip organizer and coordinator. While we work with verified transport providers, hotels, and local partners, we cannot be held responsible for circumstances beyond our control such as natural events, accidents, delays, or third-party service disruptions.",
+      ],
+    },
+    {
+      id: 7,
+      title: "7. Acceptance",
+      content: [
+        "By booking a trip, travelers agree to abide by these Terms & Conditions and the related policies on this website.",
       ],
     },
   ];

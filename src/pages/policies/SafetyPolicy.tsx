@@ -13,82 +13,67 @@ interface SafetySection {
 }
 
 const SafetyPolicy: React.FC = () => {
-  const lastUpdated = "January 15, 2024";
+  const lastUpdated = "March 15, 2026";
 
   const safetyData: SafetySection[] = [
     {
       id: 1,
-      title: "1. Our Commitment to Safety",
+      title: "1. Traveler Safety",
       content: [
-        "Your safety is our priority. Third Space diligently selects partners, accommodations, and transport providers that meet our safety standards. However, travel—especially to remote or natural destinations—carries inherent risks that cannot be entirely eliminated.",
-        "This policy outlines the responsibilities shared between Third Space (the Organizer) and you (the Participant) to ensure a safe and enjoyable experience.",
+        "Safety is a priority at Third Space Travel. Every trip is led by a trained Trip Captain responsible for coordination, communication, and basic safety management.",
       ],
     },
     {
       id: 2,
-      title: "2. Assumption of Risk",
-      content: ["By booking a trip with Third Space, you acknowledge that:"],
+      title: "2. Traveler Responsibility",
+      content: ["To ensure a smooth experience, travelers must:"],
       list: [
-        "Travel involves risks including, but not limited to, accidents, illness, political instability, and forces of nature.",
-        "Medical facilities in remote areas may be limited or difficult to access.",
-        "Participation in activities like trekking, camping, or water sports is voluntary and undertaken at your own risk.",
-      ],
-    },
-    {
-      id: 3,
-      title: "3. Medical & Health Requirements",
-      content: [
-        "Participants must ensure they are medically fit to travel. It is your responsibility to:",
-      ],
-      list: [
-        "Inform us of any pre-existing medical conditions, allergies, or dietary restrictions at the time of booking.",
-        "Carry necessary personal medication for the duration of the trip.",
-        "Adhere to health guidelines and vaccinations required for the destination.",
+        "Follow instructions from trip captains",
+        "Avoid risky or reckless behavior",
+        "Inform organizers of any medical conditions before the trip",
       ],
       highlight: {
-        label: "Insurance:",
-        text: "We strongly recommend that all participants purchase comprehensive travel insurance that covers medical emergencies, evacuation, and trip cancellations.",
+        label: "Safety Warning:",
+        text: "Any behavior that threatens safety or group harmony may result in removal from the trip without refund.",
       },
     },
     {
-      id: 4,
-      title: "4. Code of Conduct",
+      id: 3,
+      title: "3. Personal Belongings",
       content: [
-        "To maintain a safe and respectful environment for all, participants are expected to:",
+        "Participants are responsible for their personal belongings, valuables, and travel documents.",
+        "Third Space Travel is not liable for lost, stolen, or damaged items.",
       ],
-      list: [
-        "Follow the instructions and timeline set by the Trip Coordinator or Guide at all times.",
-        "Respect local customs, culture, and environmental regulations (Leave No Trace).",
-        "Avoid behavior that endangers the safety or well-being of themselves or others.",
+    },
+    {
+      id: 4,
+      title: "4. Adventure Activities",
+      content: [
+        "Certain trips may include activities such as trekking, camping, or outdoor experiences.",
       ],
       highlight: {
-        label: "Zero Tolerance:",
-        text: "Third Space reserves the right to terminate the trip for any participant found possessing illegal substances, engaging in harassment, or consistently disrupting the group. No refunds will be provided in such cases.",
+        label: "Voluntary Risk:",
+        text: "Participation in such activities is voluntary and done at the traveler’s own risk.",
       },
     },
     {
       id: 5,
-      title: "5. Liability Disclaimer",
+      title: "5. Third-Party Services",
       content: [
-        "Third Space acts as an aggregator and facilitator. We are not liable for:",
-      ],
-      list: [
-        "Delays, changes, or cancellations caused by weather, strikes, or operational issues beyond our control.",
-        "Loss, theft, or damage to personal belongings (electronics, cash, luggage).",
-        "Injuries or accidents resulting from participant negligence or failure to follow instructions.",
+        "Transportation, accommodation, and local services are provided by verified third-party vendors.",
+        "While we work with trusted partners, we cannot be held liable for their actions or service disruptions.",
       ],
     },
     {
       id: 6,
-      title: "6. Emergency Protocol",
+      title: "6. Emergency Situations",
       content: [
-        "In the event of an emergency, our Trip Coordinators are trained to:",
+        "In case of emergencies, the Trip Captain will coordinate assistance and contact local authorities if required.",
       ],
-      list: [
-        "Contact local emergency services and the nearest medical facility immediately.",
-        "Inform the participant's emergency contact person designated during booking.",
-        "Facilitate evacuation or support as reasonably possible.",
-      ],
+      highlight: {
+        label: "Recommendation:",
+        text: "Travelers are encouraged to carry basic travel insurance where applicable.",
+      },
     },
     {
       id: 7,
@@ -141,7 +126,7 @@ const SafetyPolicy: React.FC = () => {
                     <strong>Email:</strong> support@thirdspace.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +91 98765 43210{" "}
+                    <strong>Phone:</strong> +91 77197 83377{" "}
                     <small>(Mon-Sat, 10 AM - 7 PM)</small>
                   </p>
                 </div>

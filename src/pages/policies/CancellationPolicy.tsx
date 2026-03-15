@@ -10,65 +10,63 @@ interface PolicySection {
 }
 
 const CancellationPolicy: React.FC = () => {
-  const lastUpdated = "January 15, 2024";
+  const lastUpdated = "March 15, 2026";
 
   const policyData: PolicySection[] = [
     {
       id: 1,
-      title: "1. Introduction",
+      title: "1. Traveler Cancellations",
       content: [
-        "At Third Space, we understand that plans can change unexpectedly. We strive to be as flexible and transparent as possible with our cancellation policies while respecting the commitments we make to our local partners, hotels, and transport providers.",
-        "By booking a trip with Third Space, you agree to the terms outlined below. We recommend reading this policy carefully before confirming your reservation.",
+        "If a traveler cancels their booking, the following policy applies:",
+      ],
+      table: [
+        {
+          time: "More than 15 days before departure",
+          charge: "Partial refund after deducting booking amount",
+        },
+        {
+          time: "10 days before departure",
+          charge: "50% refund",
+        },
+        {
+          time: "Less than 7 days before departure",
+          charge: "No refund",
+        },
+      ],
+      list: [
+        "Actual refund timelines may vary depending on payment gateways and processing times.",
       ],
     },
     {
       id: 2,
-      title: "2. Cancellation Charges",
+      title: "2. Non-Refundable Items",
       content: [
-        "If you need to cancel your trip, the following charges apply based on the total trip cost:",
-      ],
-      table: [
-        {
-          time: "30 days or more before departure",
-          charge: "10% of trip cost (Processing Fee)",
-        },
-        { time: "15 to 29 days before departure", charge: "25% of trip cost" },
-        { time: "7 to 14 days before departure", charge: "50% of trip cost" },
-        {
-          time: "Less than 7 days before departure",
-          charge: "100% of trip cost (No Refund)",
-        },
+        "Certain expenses such as permits, advance hotel bookings, or transportation reservations may be non-refundable.",
       ],
     },
     {
       id: 3,
-      title: "3. Refund Process",
+      title: "3. No-Show",
       content: [
-        "Once confirmed, refunds are processed within 7-10 business days to the original payment method.",
-      ],
-      list: [
-        "Banks may take additional time to reflect the amount on your statement.",
-        "For UPI/Bank transfers, please email your details to speed up the process.",
-        "Non-refundable booking fees (e.g., flight tickets) will be deducted from the final refund.",
+        "If a traveler fails to report at the designated pickup point or time, it will be treated as a no-show, and no refund will be issued.",
       ],
     },
     {
       id: 4,
-      title: "4. Rescheduling Policy",
+      title: "4. Trip Cancellation by Organizer",
+      content: [
+        "If Third Space Travel cancels a trip due to insufficient participants, safety concerns, or operational reasons, travelers will be offered either:",
+      ],
       list: [
-        "Free Rescheduling: Available if requested 21 days or more before departure.",
-        "Late Rescheduling: Requests within 21 days are treated as a cancellation and re-booking.",
-        "Fare differences may apply for peak season or price increases.",
+        "A full refund, or",
+        "The option to transfer the booking to another trip/date.",
       ],
     },
     {
       id: 5,
-      title: "5. Trip Cancellation by Third Space",
-      content: ["If we cancel due to group size or force majeure:"],
-      list: [
-        "You will receive a 100% refund.",
-        "Alternatively, transfer your booking to a future trip at no extra fee.",
-        "Third Space is not liable for personal expenses like independent flight tickets or visa fees.",
+      title: "5. Force Majeure",
+      content: [
+        "No refunds will be guaranteed for cancellations caused by natural disasters, government restrictions, strikes, or other circumstances beyond our control, though we will attempt to provide reasonable alternatives whenever possible.",
       ],
     },
     {
@@ -80,7 +78,6 @@ const CancellationPolicy: React.FC = () => {
       ],
     },
   ];
-
   return (
     <section className="cancellation-page">
       <div className="policy-wrapper">
@@ -140,7 +137,7 @@ const CancellationPolicy: React.FC = () => {
                     <strong>Email:</strong> support@thirdspace.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +91 98765 43210{" "}
+                    <strong>Phone:</strong> +91 77197 83377{" "}
                     <small>(Mon-Sat, 10 AM - 7 PM)</small>
                   </p>
                 </div>

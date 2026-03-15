@@ -50,20 +50,20 @@ const BookingSection: React.FC = () => {
         options: filterOptions.months.map((m) => ({ label: m, value: m })),
       },
       {
-        id: "destination",
-        label: "Destination",
-        icon: LocationIcon,
-        options: filterOptions.destinations.map((d) => ({
-          label: d,
-          value: d,
-        })),
-      },
-      {
         id: "duration",
         label: "Duration",
         icon: ClockIcon,
         options: filterOptions.durations.map((d) => ({
           label: `${d} Days`,
+          value: d,
+        })),
+      },
+      {
+        id: "destination",
+        label: "Destination",
+        icon: LocationIcon,
+        options: filterOptions.destinations.map((d) => ({
+          label: d,
           value: d,
         })),
       },

@@ -13,71 +13,66 @@ interface PrivacySection {
 }
 
 const PrivacyPolicy: React.FC = () => {
-  const lastUpdated = "January 15, 2024";
+  const lastUpdated = "March 15, 2026";
 
   const privacyData: PrivacySection[] = [
     {
       id: 1,
-      title: "1. Introduction",
+      title: "1. Information We Collect",
       content: [
-        "At Third Space, your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website, enquire about our trips, or book a travel experience with us.",
-        "We are committed to ensuring that your data is handled transparently and securely, in compliance with applicable data protection laws.",
+        "We collect basic information necessary to manage your travel requirements. This information is used solely to manage bookings and improve travel experiences.",
+      ],
+      list: [
+        "Name",
+        "Contact details",
+        "Email address",
+        "Payment information",
+        "Travel preferences",
       ],
     },
     {
       id: 2,
-      title: "2. Information We Collect",
+      title: "2. Use of Information",
       content: [
-        "We collect information to provide better services to all our travelers. The types of information we collect include:",
+        "Your information may be used to ensure a seamless trip experience. Specifically, we use your data to:",
       ],
       list: [
-        "Personal Information: Name, email address, phone number, government ID proof (for bookings), and emergency contact details.",
-        "Trip Preferences: Destination interests, dietary restrictions, and special requests.",
-        "Technical Data: IP address, browser type, and device information when you visit our website.",
+        "Process bookings and payments",
+        "Communicate trip updates",
+        "Provide customer support",
+        "Send relevant travel updates or offers",
       ],
     },
     {
       id: 3,
-      title: "3. How We Use Your Information",
+      title: "3. Data Protection",
       content: [
-        "Your data is used solely to facilitate your travel experience and improve our services. Specifically, we use it to:",
-      ],
-      list: [
-        "Process bookings and send itinerary confirmations.",
-        "Communicate important trip updates, weather alerts, or schedule changes.",
-        "Coordinate with hotel and transport partners to ensure smooth operations.",
-        "Respond to your enquiries via WhatsApp or email.",
-        "Improve our website functionality and user experience.",
+        "We take reasonable measures to protect personal data and ensure that sensitive information is handled securely.",
       ],
     },
     {
       id: 4,
-      title: "4. Sharing of Information",
+      title: "4. Third-Party Sharing",
       content: [
-        "We do not sell, trade, or rent your personal identification information to others. However, we may share generic aggregated demographic information not linked to any personal identification information regarding visitors and users with our business partners and trusted affiliates.",
-        "We may share your information with:",
-      ],
-      list: [
-        "Service Providers: Hotels, transport operators, and activity guides strictly for the purpose of fulfilling your booking.",
-        "Legal Authorities: If required by law or to protect our rights and safety.",
-      ],
-    },
-    {
-      id: 5,
-      title: "5. Data Security",
-      content: [
-        "We adopt appropriate data collection, storage, and processing practices and security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information.",
+        "Your information may be shared only when necessary with transport providers, hotels, or service partners for operational purposes.",
       ],
       note: {
-        label: "Security Standard:",
-        text: "All sensitive data exchange between the site and its users happens over a SSL secured communication channel and is encrypted and protected with digital signatures.",
+        label: "Marketing Guarantee:",
+        text: "We do not sell or distribute personal data to external marketing agencies.",
       },
     },
     {
-      id: 6,
-      title: "6. Your Rights",
+      id: 5,
+      title: "5. Cookies & Website Usage",
       content: [
-        "You have the right to request access to the personal information we hold about you. You may also request corrections to any inaccurate data or ask for your data to be deleted from our records, subject to legal retention requirements.",
+        "Our website may use cookies to improve functionality, track performance, and enhance the user experience.",
+      ],
+    },
+    {
+      id: 6,
+      title: "6. Consent",
+      content: [
+        "By using our website or booking a trip with Third Space Travel, you consent to this Privacy Policy.",
       ],
     },
     {
@@ -89,7 +84,6 @@ const PrivacyPolicy: React.FC = () => {
       ],
     },
   ];
-
   return (
     <section className="privacy-policy-page">
       <div className="policy-wrapper">
@@ -130,7 +124,8 @@ const PrivacyPolicy: React.FC = () => {
                     <strong>Privacy Desk:</strong> privacy@thirdspace.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +91 98765 43210
+                    <strong>Phone:</strong> +91 77197 83377{" "}
+                    <small>(Mon-Sat, 10 AM - 7 PM)</small>
                   </p>
                 </div>
               )}
