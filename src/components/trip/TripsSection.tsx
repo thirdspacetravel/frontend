@@ -5,29 +5,29 @@ import Button from "../utils/Button";
 import TripCard, { type TripData } from "../cards/TripCard";
 import { trpc } from "../../trpc";
 import Spinner from "../utils/Spinner";
+
 const TripsSection: React.FC = () => {
   const navigate = useNavigate();
+
+  // Updated to handle the { trips, nextCursor } object return
   const { data: TRIPS = [], isLoading } = trpc.public.fetchLiveTrips.useQuery(
     {
       limit: 3,
-      page: 1,
+      // Pass null/undefined for filters so backend returns general list
     },
     {
       select: (data) =>
-        data.map((trip): TripData => {
-          // Helper to format date range: "Apr 12-15"
-          const formatDateRange = (
-            start?: Date | string | null,
-            end?: Date | string | null,
-          ): string => {
-            if (!start || !end) return "Dates TBD";
+        data.trips.map((trip): TripData => {
+          // Helper to format date range: "Apr 12"
+          const formatDateRange = (start?: Date | string | null): string => {
+            if (!start) return "Dates TBD";
             const s = new Date(start);
             const month = s.toLocaleString("en-US", { month: "short" });
             return `${month} ${s.getDate()}`;
           };
 
-          const images = trip.images;
-          const categories = trip.categories;
+          const images = trip.images as string[];
+          const categories = trip.categories as string[];
 
           return {
             id: trip.id,
@@ -38,9 +38,9 @@ const TripsSection: React.FC = () => {
             badge: trip.isFeatured
               ? "Featured"
               : trip.featuredCategories
-                ? trip.featuredCategories.replace(/_/g, " ") // Capitalize first letter of each word
+                ? trip.featuredCategories.replace(/_/g, " ")
                 : "General",
-            date: formatDateRange(trip.startDateTime, trip.endDateTime),
+            date: formatDateRange(trip.startDateTime),
             duration:
               trip.days && trip.nights
                 ? `${trip.days}D/${trip.nights}N`
@@ -55,6 +55,7 @@ const TripsSection: React.FC = () => {
         }),
     },
   );
+
   return (
     <section className="trips-section">
       <div className="trips-section__container">
@@ -78,9 +79,7 @@ const TripsSection: React.FC = () => {
               <TripCard
                 key={trip.id}
                 trip={trip}
-                onClick={() => {
-                  navigate(`/trip/${trip.id}`);
-                }}
+                onClick={() => navigate(`/trip/${trip.id}`)}
               />
             ))
           ) : (
@@ -91,12 +90,7 @@ const TripsSection: React.FC = () => {
         </div>
 
         <div className="trips-section__actions">
-          <Button
-            onClick={() => {
-              navigate("/group-trips");
-            }}
-            solid
-          >
+          <Button onClick={() => navigate("/group-trips")} solid>
             See All
             <ArrowRight />
           </Button>

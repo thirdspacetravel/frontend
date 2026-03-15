@@ -1,109 +1,118 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import CalendarIcon from "../../icons/CalendarIcon";
-import CardIcon from "../../icons/CardIcon";
 import ClockIcon from "../../icons/ClockIcon";
+import LocationIcon from "../../icons/LocationIcon";
 import FilterItem from "../utils/FilterItem";
-import Button from "../utils/Button";
 import TripCard, { type TripData } from "../cards/TripCard";
 import { trpc } from "../../trpc";
 import { useNavigate } from "react-router";
-import LocationIcon from "../../icons/LocationIcon";
 import Spinner from "../utils/Spinner";
-// The shape of your Prisma model
-interface FilterOption {
-  label: string;
-  value: string | number | null;
-}
-const filterConfigs = [
-  {
-    id: "month",
-    label: "Month",
-    icon: CalendarIcon,
-    options: [
-      { label: "Jan", value: 1 },
-      { label: "Feb", value: 2 },
-    ],
-  },
-  {
-    id: "budget",
-    label: "Budget",
-    icon: CardIcon,
-    options: [
-      { label: "Low", value: "l" },
-      { label: "High", value: "h" },
-    ],
-  },
-  {
-    id: "dest",
-    label: "Destination",
-    icon: LocationIcon,
-    options: [
-      { label: "Paris", value: "par" },
-      { label: "Tokyo", value: "tok" },
-    ],
-  },
-  {
-    id: "duration",
-    label: "Duration",
-    icon: ClockIcon,
-    options: [
-      { label: "1 Week", value: 7 },
-      { label: "2 Weeks", value: 14 },
-    ],
-  },
-];
+import InteractiveButton from "../utils/InteractiveButton";
 
-const handleUpdate = (id: string, selected: FilterOption | null) => {
-  console.log(`Filter ${id} is now:`, selected ? selected.value : "Cleared");
-};
 const BookingSection: React.FC = () => {
   const navigate = useNavigate();
-  const { data: TRIPS = [], isLoading } = trpc.public.fetchLiveTrips.useQuery(
+  const [filters, setFilters] = useState({
+    month: null as string | null,
+    destination: null as string | null,
+    duration: null as number | null,
+  });
+
+  // --- 1. Fetch Dynamic Filter Options ---
+  const { data: filterOptions, isLoading: isLoadingFilters } =
+    trpc.public.tripFilters.useQuery();
+
+  // --- 2. Fetch Trips (Infinite Query) ---
+  const {
+    data,
+    isLoading: isLoadingTrips,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = trpc.public.fetchLiveTrips.useInfiniteQuery(
     {
-      page: 1,
+      limit: 6,
+      ...filters,
     },
     {
-      select: (data) =>
-        data.map((trip): TripData => {
-          const images = trip.images;
-          const categories = trip.categories;
-
-          // 1. Convert potential string to Date object
-          const dateObject = trip.startDateTime
-            ? new Date(trip.startDateTime)
-            : null;
-
-          return {
-            id: trip.id,
-            title: trip.tripName,
-            image: images[0]
-              ? `${import.meta.env.VITE_API_URL}/images/${images[0]}`
-              : "https://placehold.co/363x240",
-            badge: trip.isFeatured
-              ? "Featured"
-              : trip.featuredCategories
-                ? trip.featuredCategories.replace(/_/g, " ") // Capitalize first letter of each word
-                : "General",
-            date: dateObject
-              ? dateObject.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
-              : "Dates TBD",
-            duration:
-              trip.days && trip.nights
-                ? `${trip.days}D/${trip.nights}N`
-                : "TBD",
-            tags: categories.length > 0 ? categories : ["Adventure"],
-            price: (
-              [trip.priceQuad, trip.priceTriple, trip.priceDouble].find(
-                (price) => price !== null,
-              ) || 0
-            ).toLocaleString("en-IN", { style: "currency", currency: "INR" }),
-          };
-        }),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
+
+  // --- 3. Map Filter Options to UI Format ---
+  const dynamicFilterConfigs = useMemo(() => {
+    if (!filterOptions) return [];
+
+    return [
+      {
+        id: "month",
+        label: "Month",
+        icon: CalendarIcon,
+        options: filterOptions.months.map((m) => ({ label: m, value: m })),
+      },
+      {
+        id: "destination",
+        label: "Destination",
+        icon: LocationIcon,
+        options: filterOptions.destinations.map((d) => ({
+          label: d,
+          value: d,
+        })),
+      },
+      {
+        id: "duration",
+        label: "Duration",
+        icon: ClockIcon,
+        options: filterOptions.durations.map((d) => ({
+          label: `${d} Days`,
+          value: d,
+        })),
+      },
+    ];
+  }, [filterOptions]);
+
+  // --- 4. Transform Trip Data for Grid ---
+  const allTrips = useMemo(() => {
+    if (!data) return [];
+    return data.pages
+      .flatMap((page) => page.trips)
+      .map((trip): TripData => {
+        const dateObject = trip.startDateTime
+          ? new Date(trip.startDateTime)
+          : null;
+        return {
+          id: trip.id,
+          title: trip.tripName,
+          image: trip.images[0]
+            ? `${import.meta.env.VITE_API_URL}/images/${trip.images[0]}`
+            : "https://placehold.co/363x240",
+          badge: trip.isFeatured
+            ? "Featured"
+            : trip.featuredCategories?.replace(/_/g, " ") || "General",
+          date: dateObject
+            ? dateObject.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })
+            : "Dates TBD",
+          duration:
+            trip.days && trip.nights ? `${trip.days}D/${trip.nights}N` : "TBD",
+          tags: trip.categories.length > 0 ? trip.categories : ["Adventure"],
+          price: (
+            [trip.priceQuad, trip.priceTriple, trip.priceDouble].find(
+              (p) => p !== null,
+            ) || 0
+          ).toLocaleString("en-IN", { style: "currency", currency: "INR" }),
+        };
+      });
+  }, [data]);
+
+  const handleFilterUpdate = (
+    id: string,
+    val: string | number | null | undefined,
+  ) => {
+    setFilters((prev) => ({ ...prev, [id]: val }));
+  };
+
   return (
     <section className="trips-section booking-section">
       <div className="trips-section__container">
@@ -113,46 +122,62 @@ const BookingSection: React.FC = () => {
             Curated experiences designed for connection and calm.
           </p>
         </header>
+
+        {/* Filter Bar */}
         <div className="filter-bar">
-          {filterConfigs.map((item, index) => (
-            <React.Fragment key={item.id}>
-              <FilterItem
-                icon={item.icon}
-                label={item.label}
-                options={item.options}
-                onChange={(val) => handleUpdate(item.id, val)}
-              />
-              {index < filterConfigs.length - 1 && (
-                <div className="filter-bar__divider" />
-              )}
-            </React.Fragment>
-          ))}
-          <Button solid>Filter</Button>
+          {!isLoadingFilters &&
+            dynamicFilterConfigs.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <FilterItem
+                  icon={item.icon}
+                  label={item.label}
+                  options={item.options}
+                  onChange={(opt) => handleFilterUpdate(item.id, opt?.value)}
+                />
+                {index < dynamicFilterConfigs.length - 1 && (
+                  <div className="filter-bar__divider" />
+                )}
+              </React.Fragment>
+            ))}
+          {isLoadingFilters && (
+            <p className="filter-loading">Loading filters...</p>
+          )}
         </div>
+
+        {/* Trips Grid */}
         <div className="trips-section__grid">
-          {isLoading ? (
+          {isLoadingTrips ? (
             <Spinner
               size={40}
               strokeWidth={2}
               trackColor="transparent"
               color="#333"
             />
-          ) : TRIPS.length > 0 ? (
-            TRIPS.map((trip) => (
+          ) : allTrips.length > 0 ? (
+            allTrips.map((trip) => (
               <TripCard
                 key={trip.id}
                 trip={trip}
-                onClick={() => {
-                  navigate(`/trip/${trip.id}`);
-                }}
+                onClick={() => navigate(`/trip/${trip.id}`)}
               />
             ))
           ) : (
             <div className="empty-state">
-              <p>No Trips Yet.</p>
+              <p>No trips found matching these criteria.</p>
             </div>
           )}
         </div>
+
+        {/* Load More */}
+        {hasNextPage && (
+          <InteractiveButton
+            disabled={isFetchingNextPage}
+            solid
+            onClick={async () => await fetchNextPage()}
+          >
+            See More Trips
+          </InteractiveButton>
+        )}
       </div>
     </section>
   );

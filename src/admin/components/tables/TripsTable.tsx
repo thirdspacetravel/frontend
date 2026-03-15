@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SearchIcon from "../../../icons/SearchIcon";
 import { useNavigate } from "react-router";
 import InteractiveButton from "../../../components/utils/InteractiveButton";
@@ -7,8 +7,28 @@ import { trpc } from "../../../trpc";
 import TrashIcon from "../../../icons/TrashIcon";
 import Spinner from "../../../components/utils/Spinner";
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    // Set a timer to update the value after the delay
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    // If the value changes (user types again), clear the previous timer
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const TripsTable: React.FC = () => {
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
+  const [searchConfig, setSearchConfig] = useState("");
+  const debouncedKeyword = useDebounce(searchConfig, 500);
   const navigate = useNavigate();
 
   const utils = trpc.useUtils();
@@ -31,10 +51,13 @@ const TripsTable: React.FC = () => {
   // Fetch paginated data
   const { data: trips = [], isLoading } = trpc.admin.fetchTrips.useQuery({
     page,
+    keyword: debouncedKeyword,
   });
 
   // Fetch total count for pagination logic
-  const { data: countData } = trpc.admin.getTripsCount.useQuery();
+  const { data: countData } = trpc.admin.getTripsCount.useQuery({
+    keyword: debouncedKeyword,
+  });
 
   const totalPages = countData?.totalPages || 1;
   const totalItems = countData?.total || 0;
@@ -42,6 +65,10 @@ const TripsTable: React.FC = () => {
   // Calculate showing range: e.g., "Showing 11-20 of 48"
   const startRange = (page - 1) * 10 + 1;
   const endRange = Math.min(page * 10, totalItems);
+  const handleSearchChange = (updates: typeof searchConfig) => {
+    setSearchConfig(updates);
+    setPage(1);
+  };
   return (
     <>
       <header className="dashboard-header">
@@ -50,7 +77,9 @@ const TripsTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by ID, customer name..."
+            placeholder="Search by ID, Name, Destination..."
+            value={searchConfig}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
       </header>
@@ -109,9 +138,7 @@ const TripsTable: React.FC = () => {
                       </td>
                       <td>
                         #TR-{trip.status.slice(0, 3).toUpperCase()}-
-                        {trip.tripNo
-                          .toString()
-                          .padStart(countData?.total || 4, "0")}
+                        {trip.tripNo.toString().padStart(6, "0")}
                       </td>
                       <td>
                         <span className="duration-text">
