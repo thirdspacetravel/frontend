@@ -5,15 +5,18 @@ import ArrowRight from "../../icons/ArrowRightIcon";
 import { trpc } from "../../trpc";
 import { PrefixInput, TextInput } from "./InputUtils";
 import { EnquiryType } from "../../../../backend/src/generated/prisma/enums";
+import { useNotification } from "../../hooks/useNotification";
 
 const EnquiryForm: React.FC = () => {
+  const { notify } = useNotification();
   const createEnquiryMutation = trpc.public.createEnquiry.useMutation({
-    onSuccess: () => {
-      alert("Enquiry submitted successfully!");
+    onSuccess: (data) => {
+      notify(data.message || "Enquiry submitted successfully!", "success");
     },
     onError: (error) => {
-      alert(
+      notify(
         error.message || "Failed to submit enquiry. Please try again later.",
+        "error",
       );
     },
   });

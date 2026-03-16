@@ -7,10 +7,12 @@ import LockIcon from "../../icons/LockIcon";
 import UserIcon from "../../icons/UserIcon";
 import { trpc } from "../../trpc";
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import InteractiveButton from "../../components/utils/InteractiveButton";
+import { useNotification } from "../../hooks/useNotification";
 
 const Register: React.FC = () => {
+  const { notify } = useNotification();
   const navigate = useNavigate();
   const [fullName, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,16 +21,20 @@ const Register: React.FC = () => {
     onSuccess: (data) => {
       if (data.success) {
         if (data.emailSent)
-          alert("Email verification sent! Please check your inbox.");
-        else
-          alert(
-            "Registration successful! Verification Email not Sent. Please try to log in.",
+          notify(
+            "Email verification sent! Please check your inbox.",
+            "success",
           );
-      } else alert("Registration failed! Please try again.");
+        else
+          notify(
+            "Registration successful! Verification Email not Sent. Please try to log in.",
+            "success",
+          );
+      } else notify("Registration failed! Please try again.", "error");
       navigate("/profile");
     },
     onError: (err) => {
-      alert(err.message);
+      notify(err.message, "error");
     },
   });
   const handleSignUp = async (e: React.FormEvent) => {
@@ -42,14 +48,24 @@ const Register: React.FC = () => {
 
   const signUpWithGoogle = useGoogleLogin({
     onSuccess: async (authResponse) => {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/users/auth/google`,
-        {
-          code: authResponse.code,
-        },
-        { withCredentials: true },
-      );
-      navigate("/");
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/users/auth/google`,
+          {
+            code: authResponse.code,
+          },
+          { withCredentials: true },
+        );
+        navigate("/profile");
+      } catch (err) {
+        const axiosError = err as AxiosError<{ message: string }>;
+        const errorMessage =
+          axiosError.response?.data?.message || "An unexpected error occurred";
+        notify(errorMessage, "error");
+      }
+    },
+    onError: (err) => {
+      notify("Google login failed: " + err, "error");
     },
     flow: "auth-code",
   });

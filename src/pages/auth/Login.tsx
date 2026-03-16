@@ -8,8 +8,10 @@ import LockIcon from "../../icons/LockIcon";
 import { trpc } from "../../trpc";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios, { AxiosError } from "axios";
+import { useNotification } from "../../hooks/useNotification";
 
 const Login: React.FC = () => {
+  const { notify } = useNotification();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ const Login: React.FC = () => {
       navigate("/profile");
     },
     onError: (err) => {
-      alert(err.message);
+      notify(err.message, "error");
     },
   });
   const handleSignIn = async (e: React.FormEvent) => {
@@ -39,16 +41,16 @@ const Login: React.FC = () => {
           },
           { withCredentials: true },
         );
-        navigate("/");
+        navigate("/profile");
       } catch (err) {
         const axiosError = err as AxiosError<{ message: string }>;
         const errorMessage =
           axiosError.response?.data?.message || "An unexpected error occurred";
-        alert(errorMessage);
+        notify(errorMessage, "error");
       }
     },
     onError: (err) => {
-      alert("Google login failed: " + err);
+      notify("Google login failed: " + err, "error");
     },
     flow: "auth-code",
   });

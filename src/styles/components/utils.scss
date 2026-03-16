@@ -444,15 +444,22 @@ $alert-themes: (
     align-items: flex-end;
     pointer-events: all;
     gap: 10px;
-    padding: 14px 18px;
-    border-radius: 20px;
+    padding: 10px 20px;
+    border-radius: 16px;
     width: 100%;
     max-width: 600px;
     margin-bottom: 20px;
+    position: relative;
 
     &__icon-container {
         flex-shrink: 0;
         cursor: pointer;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        padding: 6px;
+        border-radius: 50%;
+        color: #fff;
 
         svg {
             width: 10px;
@@ -510,7 +517,12 @@ $alert-themes: (
     }
 
     @each $name, $colors in $alert-themes {
+
         &--#{$name} {
+            .toast__icon-container {
+                background-color: map.get($colors, text);
+            }
+
             background-color: map.get($colors, bg);
             color: map.get($colors, text);
 
