@@ -106,10 +106,7 @@ const BookingSection: React.FC = () => {
       });
   }, [data]);
 
-  const handleFilterUpdate = (
-    id: string,
-    val: string | number | null | undefined,
-  ) => {
+  const handleFilterUpdate = (id: string, val: string | number | null) => {
     setFilters((prev) => ({ ...prev, [id]: val }));
   };
 
@@ -132,7 +129,9 @@ const BookingSection: React.FC = () => {
                   icon={item.icon}
                   label={item.label}
                   options={item.options}
-                  onChange={(opt) => handleFilterUpdate(item.id, opt?.value)}
+                  onChange={(opt) =>
+                    handleFilterUpdate(item.id, opt ? opt.value : null)
+                  }
                 />
                 {index < dynamicFilterConfigs.length - 1 && (
                   <div className="filter-bar__divider" />

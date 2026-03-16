@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SearchIcon from "../../../icons/SearchIcon";
 import { useNavigate } from "react-router";
 import InteractiveButton from "../../../components/utils/InteractiveButton";
@@ -6,24 +6,7 @@ import AddIcon from "../../../icons/AddIcon";
 import { trpc } from "../../../trpc";
 import TrashIcon from "../../../icons/TrashIcon";
 import Spinner from "../../../components/utils/Spinner";
-
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    // Set a timer to update the value after the delay
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    // If the value changes (user types again), clear the previous timer
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+import { useDebounce } from "../../../hooks/useDebounce";
 
 const TripsTable: React.FC = () => {
   const [page, setPage] = useState(1);

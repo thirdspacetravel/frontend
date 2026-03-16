@@ -1,24 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { trpc } from "../../../trpc";
 import SearchIcon from "../../../icons/SearchIcon";
 import Spinner from "../../../components/utils/Spinner";
 import UserRemoveIcon from "../../../icons/UserSuspend";
-
-const ITEMS_PER_PAGE = 10;
+import { useDebounce } from "../../../hooks/useDebounce";
 
 const CustomersTable: React.FC = () => {
-  const [page, setPage] = React.useState(1);
-  const utils = trpc.useUtils();
+  const [page, setPage] = useState(1);
+  const [searchConfig, setSearchConfig] = useState("");
+  const debouncedKeyword = useDebounce(searchConfig, 500);
 
-  // 1. Fetch paginated user data
+  const utils = trpc.useUtils();
+  const ITEMS_PER_PAGE = 10;
+
+  // 1. Fetch paginated user data with keyword filtering
   const { data: users = [], isLoading } = trpc.admin.fetchUsers.useQuery({
     page,
+    keyword: debouncedKeyword, // Added keyword
   });
 
-  // 2. Fetch total count for pagination logic
-  const { data: countData } = trpc.admin.getUsersCount.useQuery();
+  // 2. Fetch total count based on the current search keyword
+  const { data: countData } = trpc.admin.getUsersCount.useQuery({
+    keyword: debouncedKeyword, // Added keyword
+  });
 
-  // 3. Delete mutation (matching your TripsTable logic)
+  // 3. Delete mutation
   const deleteUserMutation = trpc.admin.deleteUser.useMutation({
     onSuccess: () => {
       utils.admin.fetchUsers.invalidate();
@@ -33,6 +39,12 @@ const CustomersTable: React.FC = () => {
   const startRange = (page - 1) * ITEMS_PER_PAGE + 1;
   const endRange = Math.min(page * ITEMS_PER_PAGE, totalItems);
 
+  // Handle Search Input Changes
+  const handleSearchChange = (value: string) => {
+    setSearchConfig(value);
+    setPage(1); // Reset to first page on new search
+  };
+
   return (
     <>
       <header className="dashboard-header">
@@ -41,7 +53,9 @@ const CustomersTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by name, email or phone..."
+            placeholder="Search by name or email..."
+            value={searchConfig}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
       </header>

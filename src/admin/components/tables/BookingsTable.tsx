@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { trpc } from "../../../trpc";
 import SearchIcon from "../../../icons/SearchIcon";
 import Spinner from "../../../components/utils/Spinner";
+import InteractiveButton from "../../../components/utils/InteractiveButton";
 
 const BookingsTable: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -49,6 +50,35 @@ const BookingsTable: React.FC = () => {
   const totalPages = countData?.totalPages || 1;
   const startRange = (page - 1) * LIMIT + 1;
   const endRange = Math.min(page * LIMIT, totalItems);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Define the mutation
+  const exportMutation = trpc.admin.exportBookings.useMutation({
+    onSuccess: (data) => {
+      if (data.url) {
+        downloadFile(data.url);
+      }
+      setIsExporting(false);
+    },
+    onError: (error) => {
+      console.error("Export failed:", error.message);
+      setIsExporting(false);
+      alert("Something went wrong during export.");
+    },
+  });
+  const downloadFile = (url: string) => {
+    const link = document.createElement("a");
+    link.href = `${import.meta.env.VITE_API_URL}${url}`;
+    link.setAttribute("download", url.split("/").pop() || "bookings.csv");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const handleExport = () => {
+    setIsExporting(true);
+    exportMutation.mutate();
+  };
   return (
     <>
       <header className="dashboard-header">
@@ -60,6 +90,9 @@ const BookingsTable: React.FC = () => {
             placeholder="Search by ID, customer name..."
           />
         </div>
+        <InteractiveButton solid onClick={handleExport} disabled={isExporting}>
+          Export as CSV
+        </InteractiveButton>
       </header>
 
       <div className="dashboard-card">
