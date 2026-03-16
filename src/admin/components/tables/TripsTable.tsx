@@ -60,7 +60,7 @@ const TripsTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by ID, Name, Destination..."
+            placeholder="Search by ID, Name or Destination..."
             value={searchConfig}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
@@ -120,8 +120,8 @@ const TripsTable: React.FC = () => {
                         </div>
                       </td>
                       <td>
-                        #TR-{trip.status.slice(0, 3).toUpperCase()}-
-                        {trip.tripNo.toString().padStart(6, "0")}
+                        #TR-{trip.id.slice(0, 4).toUpperCase()}-
+                        {trip.id.slice(4, 8).toUpperCase()}
                       </td>
                       <td>
                         <span className="duration-text">

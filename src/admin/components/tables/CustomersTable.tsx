@@ -53,7 +53,7 @@ const CustomersTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by name or email..."
+            placeholder="Search by ID, name or email..."
             value={searchConfig}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
@@ -70,6 +70,7 @@ const CustomersTable: React.FC = () => {
               <thead>
                 <tr>
                   <th>Customer</th>
+                  <th>Customer ID</th>
                   <th>Phone</th>
                   <th>Location</th>
                   <th>Joined Date</th>
@@ -103,6 +104,10 @@ const CustomersTable: React.FC = () => {
                             <div className="table__subtitle">{user.email}</div>
                           </div>
                         </div>
+                      </td>
+                      <td>
+                        #CST-{user.id.slice(0, 4).toUpperCase()}-
+                        {user.id.slice(4, 8).toUpperCase()}
                       </td>
                       <td>
                         <span className="table__subtitle">

@@ -3,23 +3,40 @@ import SearchIcon from "../../../icons/SearchIcon";
 import { useNavigate } from "react-router";
 import { trpc } from "../../../trpc";
 import Spinner from "../../../components/utils/Spinner";
+import { useDebounce } from "../../../hooks/useDebounce";
 const EnquiriesTable: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const [searchConfig, setSearchConfig] = useState("");
 
-  // 1. Fetch Enquiries
+  // Debounce search to prevent excessive API calls
+  const debouncedKeyword = useDebounce(searchConfig, 500);
+
+  const LIMIT = 10;
+
+  // 1. Fetch Enquiries with keyword support
   const { data: enquiries = [], isLoading } =
     trpc.admin.fetchEnquiries.useQuery({
       page,
+      keyword: debouncedKeyword, // Added keyword filter
     });
 
-  // 2. Fetch Count for Pagination
-  const { data: countData } = trpc.admin.getEnquiriesCount.useQuery();
-  const LIMIT = 10;
+  // 2. Fetch Count for Pagination with keyword support
+  const { data: countData } = trpc.admin.getEnquiriesCount.useQuery({
+    keyword: debouncedKeyword, // Added keyword filter
+  });
+
   const totalItems = countData?.total || 0;
   const totalPages = countData?.totalPages || 1;
   const startRange = (page - 1) * LIMIT + 1;
   const endRange = Math.min(page * LIMIT, totalItems);
+
+  // Search handler to reset page to 1 on input
+  const handleSearchChange = (value: string) => {
+    setSearchConfig(value);
+    setPage(1);
+  };
+
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -27,6 +44,7 @@ const EnquiriesTable: React.FC = () => {
       year: "numeric",
     });
   };
+
   const formatTime = (date: Date | string) => {
     return new Date(date).toLocaleTimeString("en-IN", {
       hour: "2-digit",
@@ -42,7 +60,9 @@ const EnquiriesTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by ID, customer name..."
+            placeholder="Search by ID, name or email..."
+            value={searchConfig}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
       </header>
@@ -76,8 +96,7 @@ const EnquiriesTable: React.FC = () => {
                   >
                     <td>
                       #ENQ-{enquiry.id.slice(0, 4).toUpperCase()}-
-                      {enquiry.id.slice(4, 8).toUpperCase()}-
-                      {enquiry.enquiryNo.toString().padStart(4, "0")}
+                      {enquiry.id.slice(4, 8).toUpperCase()}
                     </td>
                     <td>
                       <div className="table__wrap">
@@ -91,7 +110,9 @@ const EnquiriesTable: React.FC = () => {
                     </td>
                     <td>
                       <div className="table__wrap">
-                        <span className="table__title">{enquiry.subject}</span>
+                        <span className="table__title">
+                          {enquiry.subject.slice(0, 10)}...
+                        </span>
                         <span className="table__subtitle">
                           {enquiry.destination || "N/A"}
                         </span>

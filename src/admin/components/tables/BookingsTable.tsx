@@ -3,18 +3,47 @@ import { trpc } from "../../../trpc";
 import SearchIcon from "../../../icons/SearchIcon";
 import Spinner from "../../../components/utils/Spinner";
 import InteractiveButton from "../../../components/utils/InteractiveButton";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 const BookingsTable: React.FC = () => {
   const [page, setPage] = useState(1);
+  const [searchConfig, setSearchConfig] = useState("");
+
+  // Debounce the search to prevent API spamming while typing
+  const debouncedKeyword = useDebounce(searchConfig, 500);
+
   const utils = trpc.useUtils();
+  const LIMIT = 10;
+
+  // 1. Fetch Bookings with keyword support
   const { data: bookings = [], isLoading: isBookingsLoading } =
-    trpc.admin.fetchBookings.useQuery({ page });
-  const { data: countData } = trpc.admin.getBookingsCount.useQuery();
+    trpc.admin.fetchBookings.useQuery({
+      page,
+      keyword: debouncedKeyword, // Added keyword
+    });
+
+  // 2. Fetch Count for Pagination with keyword support
+  const { data: countData } = trpc.admin.getBookingsCount.useQuery({
+    keyword: debouncedKeyword, // Added keyword
+  });
+
+  const totalItems = countData?.total || 0;
+  const totalPages = countData?.totalPages || 1;
+  const startRange = (page - 1) * LIMIT + 1;
+  const endRange = Math.min(page * LIMIT, totalItems);
+
+  // Search handler that resets pagination
+  const handleSearchChange = (value: string) => {
+    setSearchConfig(value);
+    setPage(1);
+  };
+
   const markAsRefunded = trpc.admin.markAsRefunded.useMutation({
     onSuccess() {
       utils.admin.fetchBookings.invalidate();
     },
   });
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "TXN_SUCCESS":
@@ -30,7 +59,6 @@ const BookingsTable: React.FC = () => {
     }
   };
 
-  // 3. Date Formatter
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -38,6 +66,7 @@ const BookingsTable: React.FC = () => {
       year: "numeric",
     });
   };
+
   const formatTime = (date: Date | string) => {
     return new Date(date).toLocaleTimeString("en-IN", {
       hour: "2-digit",
@@ -45,11 +74,6 @@ const BookingsTable: React.FC = () => {
       second: "2-digit",
     });
   };
-  const LIMIT = 10; // Should match your backend LIMIT
-  const totalItems = countData?.total || 0;
-  const totalPages = countData?.totalPages || 1;
-  const startRange = (page - 1) * LIMIT + 1;
-  const endRange = Math.min(page * LIMIT, totalItems);
   const [isExporting, setIsExporting] = useState(false);
 
   // Define the mutation
@@ -87,7 +111,9 @@ const BookingsTable: React.FC = () => {
           <input
             type="text"
             className="dashboard-header__search-input"
-            placeholder="Search by ID, customer name..."
+            placeholder="Search ID, Customer Name or Trip Name..."
+            value={searchConfig}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
         <InteractiveButton solid onClick={handleExport} disabled={isExporting}>
@@ -132,8 +158,7 @@ const BookingsTable: React.FC = () => {
                     <tr key={booking.id}>
                       <td>
                         #BK-{booking.id.slice(0, 4).toUpperCase()}-
-                        {booking.id.slice(4, 8).toUpperCase()}-
-                        {booking.bookingno.toString().padStart(4, "0")}
+                        {booking.id.slice(4, 8).toUpperCase()}
                       </td>
                       <td>
                         <div className="table-info">
