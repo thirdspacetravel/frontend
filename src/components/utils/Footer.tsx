@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import Button from "./Button";
+import { trpc } from "../../trpc";
+import InteractiveButton from "./InteractiveButton";
+import { useNotification } from "../../hooks/useNotification";
 
 const SUPPORT_LINKS = [
   { label: "Contact us", href: "/contact" },
@@ -17,10 +19,19 @@ const IMPORTANT_LINKS = [
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState("");
+  const { notify } = useNotification();
   const navigate = useNavigate();
-  const handleSubscribe = (e: React.FormEvent) => {
+  const subscribeToNewsletter = trpc.public.subscribeToNewsletter.useMutation({
+    onSuccess: () => {
+      notify("Subscribed successfully!", "success");
+    },
+    onError: (error) => {
+      notify(`Subscription failed: ${error.message}`, "error");
+    },
+  });
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Subscribed:", email);
+    await subscribeToNewsletter.mutateAsync({ email });
     setEmail("");
   };
 
@@ -77,7 +88,7 @@ const Footer: React.FC = () => {
             Don't miss out on the exciting world of travel — subscribe now and
             embark on a journey of discovery with us.
           </p>
-          <form className="footer__form" onSubmit={handleSubscribe}>
+          <form className="footer__form" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               className="footer__input"
@@ -86,7 +97,9 @@ const Footer: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Button solid>Submit</Button>
+            <InteractiveButton onClick={handleSubscribe} solid>
+              Submit
+            </InteractiveButton>
           </form>
         </div>
       </div>
