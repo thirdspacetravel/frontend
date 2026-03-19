@@ -99,8 +99,8 @@ interface CustomDropdownProps<T = number> {
   onSelect?: (option: T | null) => void;
   placeholder?: string;
   direction?: "down" | "up";
+  disabled?: boolean;
 }
-
 // 3. Apply the generic to the function definition
 export const CustomDropdown = <T = number,>({
   options,
@@ -108,6 +108,7 @@ export const CustomDropdown = <T = number,>({
   onSelect,
   placeholder = "Select an option",
   direction = "down",
+  disabled = false, // Destructured here
 }: CustomDropdownProps<T>) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<T | null>(value);
@@ -135,54 +136,70 @@ export const CustomDropdown = <T = number,>({
   }, []);
 
   const handleOptionClick = (optionValue: T | null) => {
+    if (disabled) return; // Guard clause
     setSelectedValue(optionValue);
     if (onSelect) onSelect(optionValue);
     setIsOpen(false);
   };
 
+  const toggleDropdown = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
     <div
-      className={`custom-select ${isOpen ? "custom-select--open" : ""} ${
-        direction === "up" ? "custom-select--dropup" : ""
-      }`}
+      className={`custom-select 
+        ${isOpen ? "custom-select--open" : ""} 
+        ${direction === "up" ? "custom-select--dropup" : ""} 
+        ${disabled ? "custom-select--disabled" : ""}`} // Added disabled class
       ref={dropdownRef}
     >
       <div
         className="custom-select__header"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDropdown} // Use the guarded function
         role="button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        tabIndex={0}
+        aria-disabled={disabled} // Accessibility update
+        tabIndex={disabled ? -1 : 0} // Prevent focus when disabled
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") setIsOpen(!isOpen);
+          if (disabled) return;
+          if (e.key === "Enter" || e.key === " ") toggleDropdown();
         }}
       >
         <span>{displayLabel}</span>
-        <ChevronDownIcon
-          className={`custom-select__arrow ${isOpen ? "up" : "down"}`}
-        />
+        {!disabled && ( // Optional: hide arrow or keep it fixed
+          <ChevronDownIcon
+            className={`custom-select__arrow ${isOpen ? "up" : "down"}`}
+          />
+        )}
       </div>
 
-      <ul className="custom-select__list" role="listbox">
-        {options.map((option, index) => (
-          <li
-            key={
-              option.value !== null ? String(option.value) : `null-opt-${index}`
-            }
-            className={`custom-select__item ${
-              option.value === selectedValue
-                ? "custom-select__item--active"
-                : ""
-            }`}
-            role="option"
-            aria-selected={option.value === selectedValue}
-            onClick={() => handleOptionClick(option.value)}
-          >
-            {option.label}
-          </li>
-        ))}
-      </ul>
+      {!disabled && ( // Don't even render the list if disabled
+        <ul className="custom-select__list" role="listbox">
+          {options.map((option, index) => (
+            <li
+              key={
+                option.value !== null
+                  ? String(option.value)
+                  : `null-opt-${index}`
+              }
+              className={`custom-select__item ${
+                option.value === selectedValue
+                  ? "custom-select__item--active"
+                  : ""
+              }`}
+              role="option"
+              aria-selected={option.value === selectedValue}
+              onClick={() => handleOptionClick(option.value)}
+            >
+              {option.label}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

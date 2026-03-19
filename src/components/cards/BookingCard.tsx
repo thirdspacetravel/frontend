@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import TourSummary from "../sections/TourSummarySection";
-import Button from "../utils/Button";
+import InteractiveButton from "../utils/InteractiveButton";
 import type { TripDetails } from "../../admin/components/trips/types";
-// import { useNavigate } from "react-router";
 import Slideshow from "../utils/SlideShow";
+import { CustomDropdown, SuffixInput, TextInput } from "../utils/InputUtils";
+import { trpc } from "../../trpc";
+import { useNavigate } from "react-router";
+import { useNotification } from "../../hooks/useNotification";
 
 const formatTripDates = (start: Date | null, end: Date | null) => {
   if (!start || !end) return "Dates TBD";
@@ -27,30 +30,85 @@ const formatTripDates = (start: Date | null, end: Date | null) => {
 };
 
 const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
-  // const navigate = useNavigate();
-  // const allPackageOptions = [
-  //   { label: "Quad Sharing", value: 1, price: trip.priceQuad },
-  //   { label: "Triple Sharing", value: 2, price: trip.priceTriple },
-  //   { label: "Double Sharing", value: 3, price: trip.priceDouble },
-  // ];
+  const navigate = useNavigate();
+  const utils = trpc.useUtils();
+  // 1. Determine Booking Status
+  const isBooked = !!trip.userBooking;
+  const isConfirmed = trip.userBooking?.resultStatus === "TXN_SUCCESS";
+  const isPending = trip.userBooking?.resultStatus === "TXN_PENDING";
+  const { notify } = useNotification();
+  const allPackageOptions = [
+    { label: "Quad Sharing", value: 1, price: trip.priceQuad },
+    { label: "Triple Sharing", value: 2, price: trip.priceTriple },
+    { label: "Double Sharing", value: 3, price: trip.priceDouble },
+  ];
 
-  // const availableOptions = allPackageOptions.filter(
-  //   (option) => option.price !== null,
-  // );
+  const availableOptions = allPackageOptions.filter(
+    (option) => option.price !== null,
+  );
 
-  // const [passengers, setPassengers] = useState(2);
-  // const [tripRoom, setRoom] = useState(availableOptions[0]?.value || 3);
-  // const currentOption = allPackageOptions.find((opt) => opt.value === tripRoom);
-  // const currentPrice = currentOption?.price || 0;
-
-  // const handleBooking = async () => {
-  //   // if (bookingMutation.isPending) return;
-  //   // bookingMutation.mutate({
-  //   //   tripId: trip.id,
-  //   //   roomType: tripRoom,
-  //   //   adults: passengers,
-  //   // });
-  // };
+  const [passengers, setPassengers] = useState(trip.userBooking?.adults || 2);
+  const [tripRoom, setRoom] = useState<number>(() => {
+    if (trip.userBooking) {
+      const matchedOption = allPackageOptions.find(
+        (opt) => opt.label.split(" ")[0] === trip.userBooking?.roomtype,
+      );
+      return matchedOption?.value || 3;
+    }
+    return availableOptions[0]?.value || 3;
+  });
+  const currentOption = allPackageOptions.find((opt) => opt.value === tripRoom);
+  const currentPrice = currentOption?.price || 0;
+  const bookingMutation = trpc.user.initializePayment.useMutation({
+    onSuccess: (data) => {
+      window.location.href = data;
+    },
+    onError: (error) => {
+      notify(error.message, "error");
+    },
+  });
+  const pendingMutation = trpc.user.pendingPayment.useMutation({
+    onSuccess: (data) => {
+      if (data.hasPendingPayment) {
+        if ("paymentUrl" in data && data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+        }
+      } else {
+        if ("hasPaymentFailed" in data && data.hasPaymentFailed) {
+          utils.public.fetchTripById.invalidate({ id: trip.id });
+          notify(
+            "Your previous payment attempt failed. Please try booking again.",
+            "error",
+          );
+        } else {
+          utils.public.fetchTripById.invalidate({ id: trip.id });
+          notify("Your booking is now confirmed!", "success");
+        }
+      }
+    },
+    onError: (error) => {
+      notify(error.message, "error");
+    },
+  });
+  const handleBooking = async () => {
+    if (bookingMutation.isPending) return;
+    if (isPending) {
+      if (trip.userBooking?.id)
+        await pendingMutation.mutateAsync({
+          id: trip.userBooking?.id,
+        });
+      return;
+    }
+    if (isBooked) {
+      navigate("/profile");
+      return;
+    }
+    await bookingMutation.mutateAsync({
+      tripId: trip.id,
+      roomType: tripRoom,
+      adults: passengers,
+    });
+  };
 
   return (
     <section className="booking-card">
@@ -75,99 +133,91 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
           <aside className="booking-card__sidebar">
             <div className="booking-sidebar">
               {trip.status === "PUBLISHED" && trip.isAcceptingBookings ? (
-                // <>
-                //   <div className="booking-sidebar__pricing">
-                //     <div>
-                //       <span className="booking-sidebar__amount">
-                //         ₹{currentPrice.toLocaleString()}
-                //       </span>
-                //       <span className="booking-sidebar__label">
-                //         per person, all-inclusive
-                //       </span>
-                //     </div>
-                //     <div className="booking-sidebar__guarantee">
-                //       Verified experiences
-                //     </div>
-                //   </div>
-                //   <form
-                //     className="booking-form"
-                //     onSubmit={(e) => e.preventDefault()}
-                //   >
-                //     <div className="booking-form__row">
-                //       <TextInput
-                //         label="Start Date"
-                //         type="date"
-                //         value={
-                //           trip.startDateTime
-                //             ? new Date(trip.startDateTime)
-                //                 .toISOString()
-                //                 .split("T")[0]
-                //             : ""
-                //         }
-                //         readOnly
-                //       />
-                //       <TextInput
-                //         label="End Date"
-                //         type="date"
-                //         value={
-                //           trip.endDateTime
-                //             ? new Date(trip.endDateTime)
-                //                 .toISOString()
-                //                 .split("T")[0]
-                //             : ""
-                //         }
-                //         readOnly
-                //       />
-                //     </div>
-
-                //     <SuffixInput
-                //       label="Travelers"
-                //       id="passengers"
-                //       type="number"
-                //       min="1"
-                //       max="10"
-                //       value={passengers}
-                //       onChange={(e) => setPassengers(parseInt(e.target.value))}
-                //       suffix="people"
-                //     />
-
-                //     <div className="booking-form__field">
-                //       <label>Package Option</label>
-                //       <CustomDropdown
-                //         options={availableOptions}
-                //         value={tripRoom}
-                //         onSelect={(val) =>
-                //           setRoom(val || availableOptions[0]?.value || 3)
-                //         }
-                //       />
-                //     </div>
-
-                //     <Button solid onClick={handleBooking}>
-                //       Secure Your Spot
-                //     </Button>
-                //   </form>
-                //   <div className="booking-sidebar__summary">
-                //     <span>Total for {passengers} people</span>
-                //     <span className="booking-sidebar__total-price">
-                //       ₹{(passengers * currentPrice).toLocaleString()}
-                //       <small> Incl. transport & stay</small>
-                //     </span>
-                //   </div>
-                // </>
-                <div className="booking-sidebar__unavailable">
-                  Online Booking is currently under development. Please contact
-                  us directly to book your trip. We apologize for the
-                  inconvenience and appreciate your understanding as we work to
-                  bring you a seamless booking experience soon.
-                  <Button
-                    solid
-                    onClick={() => {
-                      window.open(`https://wa.me/7719783377`, "_blank");
-                    }}
+                <>
+                  <div className="booking-sidebar__pricing">
+                    <div>
+                      <span className="booking-sidebar__amount">
+                        ₹{currentPrice.toLocaleString()}
+                      </span>
+                      <span className="booking-sidebar__label">
+                        per person, all-inclusive
+                      </span>
+                    </div>
+                    <div className="booking-sidebar__guarantee">
+                      Verified experiences
+                    </div>
+                  </div>
+                  <form
+                    className="booking-form"
+                    onSubmit={(e) => e.preventDefault()}
                   >
-                    Contact Us
-                  </Button>
-                </div>
+                    <div className="booking-form__row">
+                      <TextInput
+                        label="Start Date"
+                        type="date"
+                        value={
+                          trip.startDateTime
+                            ? new Date(trip.startDateTime)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
+                        readOnly
+                      />
+                      <TextInput
+                        label="End Date"
+                        type="date"
+                        value={
+                          trip.endDateTime
+                            ? new Date(trip.endDateTime)
+                                .toISOString()
+                                .split("T")[0]
+                            : ""
+                        }
+                        readOnly
+                      />
+                    </div>
+
+                    <SuffixInput
+                      label="Travelers"
+                      id="passengers"
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={passengers}
+                      onChange={(e) => setPassengers(parseInt(e.target.value))}
+                      suffix="people"
+                      disabled={isBooked}
+                    />
+
+                    <div className="booking-form__field">
+                      <label>Package Option</label>
+                      <CustomDropdown
+                        options={availableOptions}
+                        value={tripRoom}
+                        onSelect={(val) =>
+                          setRoom(val || availableOptions[0]?.value || 3)
+                        }
+                        disabled={isBooked}
+                      />
+                    </div>
+
+                    <InteractiveButton solid onClick={handleBooking}>
+                      {isBooked
+                        ? isConfirmed
+                          ? "View Your Booking"
+                          : "Complete Your Payment"
+                        : "Secure Your Spot"}
+                    </InteractiveButton>
+                  </form>
+                  <div className="booking-sidebar__summary">
+                    <span>Total for {passengers} people</span>
+                    <span className="booking-sidebar__total-price">
+                      ₹{(passengers * currentPrice).toLocaleString()}
+                      <small> Incl. transport & stay</small>
+                    </span>
+                  </div>
+                </>
               ) : (
                 <div className="booking-sidebar__unavailable">
                   {trip.status === "CANCELLED"

@@ -9,6 +9,7 @@ import { trpc } from "../../trpc";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios, { AxiosError } from "axios";
 import { useNotification } from "../../hooks/useNotification";
+import type { ZodErrorTree } from "./type";
 
 const Login: React.FC = () => {
   const { notify } = useNotification();
@@ -19,8 +20,30 @@ const Login: React.FC = () => {
     onSuccess: () => {
       navigate("/profile");
     },
-    onError: (err) => {
-      notify(err.message, "error");
+    onError: (error) => {
+      const zodError = error.data?.zodError as ZodErrorTree | null;
+
+      if (zodError) {
+        // Handle Field-Specific Errors (Object fields)
+        if (zodError.properties) {
+          let errorMsg = "";
+          Object.values(zodError.properties).forEach((tree) => {
+            if (tree.errors.length > 0) {
+              errorMsg += `${tree.errors[0]}\n`;
+            }
+          });
+          notify(errorMsg, "error");
+        }
+        if (zodError.errors.length > 0) {
+          notify(zodError.errors[0], "error");
+        }
+        return;
+      }
+      if (error.data?.code) {
+        notify(error.message, "error");
+        return;
+      }
+      notify("Something went wrong. Please try again.", "error");
     },
   });
   const handleSignIn = async (e: React.FormEvent) => {

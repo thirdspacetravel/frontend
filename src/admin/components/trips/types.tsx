@@ -16,6 +16,17 @@ export interface TripDetails extends Omit<
   itinerary: DayData[];
   categories: string[];
   images: string[];
+  userBooking?: {
+    id: string;
+    roomtype: string;
+    adults: number;
+    resultStatus:
+      | "TXN_SUCCESS"
+      | "TXN_PENDING"
+      | "TXN_FAILURE"
+      | "TXN_CANCELLED";
+    txnId?: string | null;
+  } | null;
 }
 export interface OnChangeHandler {
   <K extends keyof TripDetails>(label: K, value: TripDetails[K]): void;

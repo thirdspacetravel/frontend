@@ -10,6 +10,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios, { AxiosError } from "axios";
 import InteractiveButton from "../../components/utils/InteractiveButton";
 import { useNotification } from "../../hooks/useNotification";
+import type { ZodErrorTree } from "./type";
 
 const Register: React.FC = () => {
   const { notify } = useNotification();
@@ -33,8 +34,32 @@ const Register: React.FC = () => {
       } else notify("Registration failed! Please try again.", "error");
       navigate("/profile");
     },
-    onError: (err) => {
-      notify(err.message, "error");
+    onError: (error) => {
+      // 1. Check if it's a Zod Validation Error
+      // We cast it to ZodErrorTree to access the recursive properties
+      const zodError = error.data?.zodError as ZodErrorTree | null;
+
+      if (zodError) {
+        // Handle Field-Specific Errors (Object fields)
+        if (zodError.properties) {
+          let errorMsg = "";
+          Object.values(zodError.properties).forEach((tree) => {
+            if (tree.errors.length > 0) {
+              errorMsg += `${tree.errors[0]}\n`;
+            }
+          });
+          notify(errorMsg, "error");
+        }
+        if (zodError.errors.length > 0) {
+          notify(zodError.errors[0], "error");
+        }
+        return;
+      }
+      if (error.data?.code) {
+        notify(error.message, "error");
+        return;
+      }
+      notify("Something went wrong. Please try again.", "error");
     },
   });
   const handleSignUp = async (e: React.FormEvent) => {
