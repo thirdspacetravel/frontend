@@ -1,47 +1,64 @@
 import React from "react";
-import Button from "../utils/Button";
+import { trpc } from "../../trpc";
+import type { TransactionStatus } from "../../../../backend/src/generated/prisma/enums";
+import InteractiveButton from "../utils/InteractiveButton";
+import { useNotification } from "../../hooks/useNotification";
 
 interface Booking {
   id: string;
   orderId: string;
   title: string;
   image: string;
-  status: "Confirmed" | "Completed" | "Cancelled";
+  status: TransactionStatus;
   startDate: string;
   endDate: string;
   travelers: string;
   totalPaid: string;
 }
 
-const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: "1",
-    orderId: "#TS-29384-MNL",
-    title: "Manali: The Mountain Call",
-    image:
-      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80",
-    status: "Confirmed",
-    startDate: "Apr 12",
-    endDate: "Apr 15, 2024",
-    travelers: "2 Adults",
-    totalPaid: "₹14,998",
-  },
-  {
-    id: "2",
-    orderId: "#TS-10293-RSH",
-    title: "Rishikesh: Adventure & Chill",
-    image:
-      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80",
-    status: "Completed",
-    startDate: "Dec 10",
-    endDate: "Dec 12, 2023",
-    travelers: "4 Adults",
-    totalPaid: "₹23,996",
-  },
-];
-
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
-  const isCompleted = booking.status === "Completed";
+  const isCompleted = booking.status === "TXN_SUCCESS";
+  const isPending = booking.status === "TXN_PENDING";
+  const bookingStatus =
+    booking.status === "TXN_SUCCESS"
+      ? "Confirmed"
+      : booking.status === "TXN_PENDING"
+        ? "Pending Payment"
+        : "Failed";
+  const utils = trpc.useUtils();
+  const { notify } = useNotification();
+  const pendingMutation = trpc.user.pendingPayment.useMutation({
+    onSuccess: (data) => {
+      if (data.hasPendingPayment) {
+        if ("paymentUrl" in data && data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+        }
+      } else {
+        if ("hasPaymentFailed" in data && data.hasPaymentFailed) {
+          utils.user.fetchBookings.invalidate();
+          notify(
+            "Your previous payment attempt failed. Please try booking again.",
+            "error",
+          );
+        } else {
+          utils.user.fetchBookings.invalidate();
+          notify("Your booking is now confirmed!", "success");
+        }
+      }
+    },
+    onError: (error) => {
+      notify(error.message, "error");
+    },
+  });
+  const handlePending = async () => {
+    if (pendingMutation.isPending) return;
+    if (isPending) {
+      await pendingMutation.mutateAsync({
+        id: booking.id,
+      });
+      return;
+    }
+  };
 
   return (
     <div className={`booking-card ${isCompleted ? "booking-card--past" : ""}`}>
@@ -60,10 +77,10 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
             <span className="booking-card__order-id">{booking.orderId}</span>
           </div>
           <div
-            className={`status-badge status-badge--${booking.status.toLowerCase()}`}
+            className={`status-badge status-badge--${bookingStatus.toLowerCase()}`}
           >
-            {booking.status === "Confirmed" && <CheckIcon />}
-            <span>{booking.status}</span>
+            {booking.status === "TXN_SUCCESS" && <CheckIcon />}
+            <span>{bookingStatus}</span>
           </div>
         </div>
 
@@ -85,15 +102,10 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
         </div>
 
         <div className="booking-card__actions">
-          {isCompleted ? (
-            <Button solid>Book Again</Button>
-          ) : (
-            <>
-              <Button>
-                <DownloadIcon /> Invoice
-              </Button>
-              <Button solid>View Ticket</Button>
-            </>
+          {isPending && (
+            <InteractiveButton solid onClick={handlePending}>
+              Complete Your Payment
+            </InteractiveButton>
           )}
         </div>
       </div>
@@ -102,6 +114,33 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
 };
 
 const MyBookings: React.FC = () => {
+  const { data = [], isLoading } = trpc.user.fetchBookings.useQuery(undefined, {
+    select: (data) =>
+      data.map((b) => ({
+        id: b.id,
+        orderId: `#ORD-${b.id.slice(0, 4).toUpperCase()}-${b.id.slice(4, 8).toUpperCase()}`,
+        title: b.trip?.tripName || "Unknown Trip",
+        image: b.trip?.images?.[0]
+          ? `${import.meta.env.VITE_API_URL}/images/${b.trip.images[0]}`
+          : "https://via.placeholder.com/400x300?text=No+Image",
+        status: b.resultStatus,
+        // Fix: Check if date exists before passing to Date constructor
+        startDate: b.trip?.startDateTime
+          ? new Date(b.trip.startDateTime).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          : "N/A",
+        endDate: b.trip?.endDateTime
+          ? new Date(b.trip.endDateTime).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })
+          : "N/A",
+        travelers: `${b.adults} Persons`, // Consider replacing with b.pax or similar if available
+        totalPaid: `₹${b.amount || "0"}`, // Map this to your actual price field
+      })),
+  });
   return (
     <div className="profile-content">
       <header className="profile-content__header">
@@ -110,13 +149,16 @@ const MyBookings: React.FC = () => {
       </header>
 
       <div className="bookings-list">
-        {/* {MOCK_BOOKINGS.map((booking) => (
-          <BookingCard key={booking.id} booking={booking} />
-        ))} */}
-        <p className="no-bookings">
-          You have no bookings yet. Start exploring and book your next
-          adventure!
-        </p>
+        {data.length > 0 &&
+          data.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} />
+          ))}
+        {(data.length == 0 || isLoading) && (
+          <p className="no-bookings">
+            You have no bookings yet. Start exploring and book your next
+            adventure!
+          </p>
+        )}
       </div>
     </div>
   );
@@ -134,21 +176,6 @@ const CheckIcon = () => (
     strokeLinejoin="round"
   >
     <path d="M1.16 7a5.83 5.83 0 1111.66 0 5.83 5.83 0 01-11.66 0zM5.25 7l1.16 1.16L8.75 5.83" />
-  </svg>
-);
-
-const DownloadIcon = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 14 14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M7 8.75V1.75M12.25 8.75V11.08c0 .64-.52 1.17-1.17 1.17H2.92c-.64 0-1.17-.52-1.17-1.17V8.75M4.08 5.83L7 8.75l2.92-2.92" />
   </svg>
 );
 
