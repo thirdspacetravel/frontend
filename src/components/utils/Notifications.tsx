@@ -3,46 +3,62 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   NotificationContext,
   type ToastItem,
-  type ConfirmConfig,
   type ToastType,
 } from "../../hooks/useNotification";
 import Toast from "./Toast";
+
+// Update this interface to reflect the new async structure
+interface ConfirmData {
+  message: React.ReactNode;
+  type: ToastType;
+  resolve: (value: boolean) => void;
+}
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [confirmData, setConfirmData] = useState<ConfirmConfig | null>(null);
+  const [confirmData, setConfirmData] = useState<ConfirmData | null>(null);
 
-  // Helper function to remove a specific toast by ID
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   const notify = (message: React.ReactNode, type: ToastType = "info") => {
-    const id = Math.random().toString(36).substr(2, 9);
-
+    const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
 
-    // Auto-remove after 4 seconds
     setTimeout(() => {
       removeToast(id);
     }, 4000);
   };
 
+  // Refactored to return a Promise
   const confirm = (
     message: React.ReactNode,
-    onConfirm: () => void,
     type: ToastType = "warning",
-  ) => {
-    setConfirmData({ message, onConfirm, type });
+  ): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setConfirmData({
+        message,
+        type,
+        resolve, // Store the resolve function to be called later
+      });
+    });
+  };
+
+  // Helper to handle the user's choice and clear state
+  const handleConfirmAction = (choice: boolean) => {
+    if (confirmData) {
+      confirmData.resolve(choice);
+      setConfirmData(null);
+    }
   };
 
   return (
     <NotificationContext.Provider value={{ notify, confirm }}>
       {children}
 
-      {/* Stacked Toasts Container */}
       <div className="notification-area">
         <AnimatePresence mode="popLayout">
           {toasts.map((t) => (
@@ -50,31 +66,27 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
               key={t.id}
               type={t.type}
               message={t.message}
-              onClose={() => removeToast(t.id)} // Pass the manual close handler here
+              onClose={() => removeToast(t.id)}
             />
           ))}
         </AnimatePresence>
       </div>
 
-      {/* Confirmation Overlay */}
       <AnimatePresence>
         {confirmData && (
           <div className="confirm-overlay">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
             >
               <Toast
                 type={confirmData.type}
                 message={confirmData.message}
                 showActions
-                onConfirm={() => {
-                  confirmData.onConfirm();
-                  setConfirmData(null);
-                }}
-                onCancel={() => setConfirmData(null)}
-                // onClose is usually not needed for modals, but you can add it if required
+                onConfirm={() => handleConfirmAction(true)}
+                onCancel={() => handleConfirmAction(false)}
+                onClose={() => handleConfirmAction(false)}
               />
             </motion.div>
           </div>

@@ -3,6 +3,7 @@ import { trpc } from "../../trpc";
 import type { TransactionStatus } from "../../../../backend/src/generated/prisma/enums";
 import InteractiveButton from "../utils/InteractiveButton";
 import { useNotification } from "../../hooks/useNotification";
+import Button from "../utils/Button";
 
 interface Booking {
   id: string;
@@ -14,19 +15,21 @@ interface Booking {
   endDate: string;
   travelers: string;
   totalPaid: string;
+  refunded?: boolean;
 }
 
 const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
   const isCompleted = booking.status === "TXN_SUCCESS";
   const isPending = booking.status === "TXN_PENDING";
+  const isCancelled = booking.status === "TXN_CANCELLED";
   const bookingStatus =
     booking.status === "TXN_SUCCESS"
       ? "Confirmed"
       : booking.status === "TXN_PENDING"
-        ? "Pending Payment"
-        : "Failed";
+        ? "Pending"
+        : "Cancelled";
   const utils = trpc.useUtils();
-  const { notify } = useNotification();
+  const { notify, confirm } = useNotification();
   const pendingMutation = trpc.user.pendingPayment.useMutation({
     onSuccess: (data) => {
       if (data.hasPendingPayment) {
@@ -59,7 +62,25 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
       return;
     }
   };
+  const cancelBooking = trpc.user.cancelBooking.useMutation({
+    onSuccess: () => {
+      utils.user.fetchBookings.invalidate();
+      notify("Booking cancelled successfully.", "success");
+    },
+    onError: (error) => {
+      notify(error.message || "Failed to cancel booking ❌", "error");
+    },
+  });
 
+  const handleCancel = async () => {
+    const confirmed = await confirm(
+      "Are you sure you want to cancel this booking?",
+      "info",
+    );
+    if (confirmed) {
+      await cancelBooking.mutateAsync({ bookingId: booking.id });
+    }
+  };
   return (
     <div className={`booking-card ${isCompleted ? "booking-card--past" : ""}`}>
       <div className="booking-card__image-container">
@@ -107,6 +128,26 @@ const BookingCard: React.FC<{ booking: Booking }> = ({ booking }) => {
               Complete Your Payment
             </InteractiveButton>
           )}
+          {!isCancelled && (
+            <>
+              <InteractiveButton
+                onClick={async () => {
+                  await handleCancel();
+                }}
+              >
+                Cancel Booking
+              </InteractiveButton>
+              <Button solid>View Ticket</Button>
+            </>
+          )}
+          {isCancelled && (
+            <p className="cancelled-message">
+              This booking was cancelled.{" "}
+              {!booking.refunded
+                ? "Your refund is being processed."
+                : "Refund completed."}
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -139,6 +180,7 @@ const MyBookings: React.FC = () => {
           : "N/A",
         travelers: `${b.adults} Persons`, // Consider replacing with b.pax or similar if available
         totalPaid: `₹${b.amount || "0"}`, // Map this to your actual price field
+        refunded: b.refunded, // Assuming you have a refundStatus field
       })),
   });
   return (

@@ -4,10 +4,13 @@ import SearchIcon from "../../../icons/SearchIcon";
 import Spinner from "../../../components/utils/Spinner";
 import InteractiveButton from "../../../components/utils/InteractiveButton";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { useNotification } from "../../../hooks/useNotification";
+import TrashIcon from "../../../icons/TrashIcon";
 
 const BookingsTable: React.FC = () => {
   const [page, setPage] = useState(1);
   const [searchConfig, setSearchConfig] = useState("");
+  const { notify, confirm } = useNotification();
 
   // Debounce the search to prevent API spamming while typing
   const debouncedKeyword = useDebounce(searchConfig, 500);
@@ -41,6 +44,11 @@ const BookingsTable: React.FC = () => {
   const markAsRefunded = trpc.admin.markAsRefunded.useMutation({
     onSuccess() {
       utils.admin.fetchBookings.invalidate();
+      utils.user.fetchBookings.invalidate();
+      notify("Booking marked as refunded.", "success");
+    },
+    onError(error) {
+      notify(error.message || "Failed to mark as refunded.", "error");
     },
   });
 
@@ -90,6 +98,26 @@ const BookingsTable: React.FC = () => {
       alert("Something went wrong during export.");
     },
   });
+  const cancelBooking = trpc.admin.cancelBooking.useMutation({
+    onSuccess: () => {
+      utils.admin.fetchBookings.invalidate();
+      utils.admin.getBookingsCount.invalidate();
+      notify("Booking cancelled successfully.", "success");
+    },
+    onError: (error) => {
+      notify(error.message || "Failed to cancel booking", "error");
+    },
+  });
+
+  const handleCancel = async (bookingId: string) => {
+    const confirmed = await confirm(
+      "Are you sure you want to cancel this booking?",
+      "info",
+    );
+    if (confirmed) {
+      await cancelBooking.mutateAsync({ bookingId });
+    }
+  };
   const downloadFile = (url: string) => {
     const link = document.createElement("a");
     link.href = `${import.meta.env.VITE_API_URL}${url}`;
@@ -139,21 +167,19 @@ const BookingsTable: React.FC = () => {
                   <th>Status</th>
                   <th>Room</th>
                   <th>Txn ID</th>
-                  <th>Bank Txn ID</th>
-                  <th>Txn Amount</th>
-                  <th>Type</th>
-                  <th>Gateway</th>
-                  <th>Bank</th>
-                  <th>Mode</th>
                   <th>Refund Amt</th>
                   <th>Refund</th>
                   <th>Txn Date</th>
                   <th>Txn Time</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map((booking) => {
                   const status = getStatusLabel(booking.resultStatus);
+                  const isDeleting =
+                    cancelBooking.isPending &&
+                    cancelBooking.variables?.bookingId === booking.id;
                   return (
                     <tr key={booking.id}>
                       <td>
@@ -206,16 +232,6 @@ const BookingsTable: React.FC = () => {
                       <td className="text-xs font-mono">
                         {booking.txnId || "—"}
                       </td>
-                      <td className="text-xs font-mono">
-                        {booking.bankTxnId || "—"}
-                      </td>
-                      <td>
-                        {booking.txnAmount ? `₹${booking.txnAmount}` : "—"}
-                      </td>
-                      <td>{booking.txnType || "—"}</td>
-                      <td>{booking.gatewayName || "—"}</td>
-                      <td>{booking.bankName || "—"}</td>
-                      <td>{booking.paymentMode || "—"}</td>
                       <td>
                         {booking.refundAmt ? `₹${booking.refundAmt}` : "—"}
                       </td>
@@ -223,10 +239,14 @@ const BookingsTable: React.FC = () => {
                         {booking.resultStatus == "TXN_CANCELLED" ? (
                           <span
                             className={`status-badge ${booking.refunded ? "status-badge--paid" : "status-badge--cancelled"}`}
-                            onClick={() => {
+                            onClick={async () => {
                               if (!booking.refunded) {
-                                if (confirm("Mark this booking as refunded?")) {
-                                  markAsRefunded.mutate({
+                                const confirmed = await confirm(
+                                  "Mark this booking as refunded?",
+                                  "warning",
+                                );
+                                if (confirmed) {
+                                  await markAsRefunded.mutateAsync({
                                     bookingId: booking.id,
                                   });
                                 }
@@ -244,6 +264,24 @@ const BookingsTable: React.FC = () => {
                       </td>
                       <td className="table__date">
                         {booking.txnDate ? formatTime(booking.txnDate) : "—"}
+                      </td>
+                      <td>
+                        {booking.resultStatus !== "TXN_CANCELLED" && (
+                          <button
+                            className="action-btn"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              await handleCancel(booking.id);
+                            }}
+                            disabled={cancelBooking.isPending}
+                          >
+                            {isDeleting ? (
+                              <Spinner size={16} strokeWidth={1} />
+                            ) : (
+                              <TrashIcon color="red" />
+                            )}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

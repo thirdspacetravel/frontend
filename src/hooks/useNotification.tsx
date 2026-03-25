@@ -8,19 +8,20 @@ export interface ToastItem {
   message: React.ReactNode;
 }
 
+// We can simplify or remove ConfirmConfig if it's only used internally,
+// but here is how it looks for the async approach:
 export interface ConfirmConfig {
   message: React.ReactNode;
   type: ToastType;
-  onConfirm: () => void;
 }
 
 interface NotificationContextType {
   notify: (message: React.ReactNode, type?: ToastType) => void;
-  confirm: (
-    message: React.ReactNode,
-    onConfirm: () => void,
-    type?: ToastType,
-  ) => void;
+  /**
+   * Opens a confirmation dialog.
+   * @returns A promise that resolves to true if confirmed, false if cancelled.
+   */
+  confirm: (message: React.ReactNode, type?: ToastType) => Promise<boolean>;
 }
 
 export const NotificationContext = createContext<
@@ -29,7 +30,10 @@ export const NotificationContext = createContext<
 
 export const useNotification = () => {
   const context = useContext(NotificationContext);
-  if (!context)
-    throw new Error("useNotification must be used within NotificationProvider");
+  if (!context) {
+    throw new Error(
+      "useNotification must be used within a NotificationProvider",
+    );
+  }
   return context;
 };
