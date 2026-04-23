@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Group Trips", href: "/group-trips" },
   { label: "Corporate & Institutional Trips", href: "/corporate-trips" },
+  { label: "Journal & Stories", href: "/blog" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

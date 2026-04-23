@@ -8,6 +8,7 @@ import GlobeIcon from "../../../icons/GlobeIcon";
 import InboxIcon from "../../../icons/InboxIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 import { trpc } from "../../../trpc";
+import BlogIcon from "../../../icons/BlogIcon";
 interface NavItem {
   label: string;
   icon: React.ReactNode;
@@ -22,6 +23,7 @@ interface SidebarProps {
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: <DashboardIcon />, path: "/admin" },
   { label: "Trips", icon: <GlobeIcon />, path: "/admin/trips" },
+  { label: "Blogs", icon: <BlogIcon />, path: "/admin/blogs" },
   { label: "Bookings", icon: <CalendarIcon />, path: "/admin/bookings" },
   { label: "Enquiries", icon: <InboxIcon />, path: "/admin/enquiries" },
   { label: "Customers", icon: <UsersIcon />, path: "/admin/customers" },

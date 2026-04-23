@@ -3,6 +3,8 @@ import { useSystemTheme } from "./hooks/useSystemTheme";
 import ScrollToTop from "./hooks/useScrollToTop";
 import MainLayout from "./components/utils/MainLayout";
 import Home from "./pages/Home";
+import Blogs from "./pages/blog/Blogs";
+import Blog from "./pages/blog/Blog";
 import GroupTrips from "./pages/trips/GroupTrips";
 import HowItWorks from "./pages/HowItWorks";
 import About from "./pages/About";
@@ -34,6 +36,8 @@ import AdminLoginGuard from "./admin/guards/AdminLoginGuard";
 import LoginGuard from "./guards/LoginGuard";
 import AuthGuard from "./guards/AuthGuard";
 import { VerifyEmail } from "./pages/VerifyMail";
+import BlogsPage from "./admin/pages/blog/BlogsPage";
+import BlogDetailPage from "./admin/pages/blog/BlogDetailPage";
 function App() {
   useSystemTheme();
   return (
@@ -60,6 +64,8 @@ function App() {
           <Route path="/safety-policy" element={<SafetyPolicy />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/trip/:tripId" element={<Trip />} />
+          <Route path="/blog" element={<Blogs />} />
+          <Route path="/blog/:slug" element={<Blog />} />
         </Route>
         <Route path="/admin">
           <Route element={<AdminLoginGuard />}>
@@ -71,6 +77,10 @@ function App() {
               <Route path="trips">
                 <Route index element={<TripsPage />} />
                 <Route path=":tripId" element={<TripDetailPage />} />
+              </Route>
+              <Route path="blogs">
+                <Route index element={<BlogsPage />} />
+                <Route path=":blogId" element={<BlogDetailPage />} />
               </Route>
               <Route path="bookings" element={<BookingsPage />} />
               <Route path="customers" element={<CustomersPage />} />

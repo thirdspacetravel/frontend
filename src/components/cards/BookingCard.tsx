@@ -4,9 +4,9 @@ import InteractiveButton from "../utils/InteractiveButton";
 import type { TripDetails } from "../../admin/components/trips/types";
 import Slideshow from "../utils/SlideShow";
 import { CustomDropdown, SuffixInput, TextInput } from "../utils/InputUtils";
-import { trpc } from "../../trpc";
-import { useNavigate } from "react-router";
-import { useNotification } from "../../hooks/useNotification";
+// import { trpc } from "../../trpc";
+// import { useNavigate } from "react-router";
+// import { useNotification } from "../../hooks/useNotification";
 
 const formatTripDates = (start: Date | null, end: Date | null) => {
   if (!start || !end) return "Dates TBD";
@@ -30,13 +30,13 @@ const formatTripDates = (start: Date | null, end: Date | null) => {
 };
 
 const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
-  const navigate = useNavigate();
-  const utils = trpc.useUtils();
+  // const navigate = useNavigate();
+  // const utils = trpc.useUtils();
   // 1. Determine Booking Status
   const isBooked = !!trip.userBooking;
   const isConfirmed = trip.userBooking?.resultStatus === "TXN_SUCCESS";
-  const isPending = trip.userBooking?.resultStatus === "TXN_PENDING";
-  const { notify } = useNotification();
+  // const isPending = trip.userBooking?.resultStatus === "TXN_PENDING";
+  // const { notify } = useNotification();
   const allPackageOptions = [
     { label: "Quad Sharing", value: 1, price: trip.priceQuad },
     { label: "Triple Sharing", value: 2, price: trip.priceTriple },
@@ -59,55 +59,59 @@ const BookingCard: React.FC<{ trip: TripDetails }> = ({ trip }) => {
   });
   const currentOption = allPackageOptions.find((opt) => opt.value === tripRoom);
   const currentPrice = currentOption?.price || 0;
-  const bookingMutation = trpc.user.initializePayment.useMutation({
-    onSuccess: (data) => {
-      window.location.href = data;
-    },
-    onError: (error) => {
-      notify(error.message, "error");
-    },
-  });
-  const pendingMutation = trpc.user.pendingPayment.useMutation({
-    onSuccess: (data) => {
-      if (data.hasPendingPayment) {
-        if ("paymentUrl" in data && data.paymentUrl) {
-          window.location.href = data.paymentUrl;
-        }
-      } else {
-        if ("hasPaymentFailed" in data && data.hasPaymentFailed) {
-          utils.public.fetchTripById.invalidate({ id: trip.id });
-          notify(
-            "Your previous payment attempt failed. Please try booking again.",
-            "error",
-          );
-        } else {
-          utils.public.fetchTripById.invalidate({ id: trip.id });
-          notify("Your booking is now confirmed!", "success");
-        }
-      }
-    },
-    onError: (error) => {
-      notify(error.message, "error");
-    },
-  });
+  // const bookingMutation = trpc.user.initializePayment.useMutation({
+  //   onSuccess: (data) => {
+  //     window.location.href = data;
+  //   },
+  //   onError: (error) => {
+  //     notify(error.message, "error");
+  //   },
+  // });
+  // const pendingMutation = trpc.user.pendingPayment.useMutation({
+  //   onSuccess: (data) => {
+  //     if (data.hasPendingPayment) {
+  //       if ("paymentUrl" in data && data.paymentUrl) {
+  //         window.location.href = data.paymentUrl;
+  //       }
+  //     } else {
+  //       if ("hasPaymentFailed" in data && data.hasPaymentFailed) {
+  //         utils.public.fetchTripById.invalidate({ id: trip.id });
+  //         notify(
+  //           "Your previous payment attempt failed. Please try booking again.",
+  //           "error",
+  //         );
+  //       } else {
+  //         utils.public.fetchTripById.invalidate({ id: trip.id });
+  //         notify("Your booking is now confirmed!", "success");
+  //       }
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     notify(error.message, "error");
+  //   },
+  // });
   const handleBooking = async () => {
-    if (bookingMutation.isPending) return;
-    if (isPending) {
-      if (trip.userBooking?.id)
-        await pendingMutation.mutateAsync({
-          id: trip.userBooking?.id,
-        });
-      return;
-    }
-    if (isBooked) {
-      navigate("/profile");
-      return;
-    }
-    await bookingMutation.mutateAsync({
-      tripId: trip.id,
-      roomType: tripRoom,
-      adults: passengers,
-    });
+    // if (bookingMutation.isPending) return;
+    // if (isPending) {
+    //   if (trip.userBooking?.id)
+    //     await pendingMutation.mutateAsync({
+    //       id: trip.userBooking?.id,
+    //     });
+    //   return;
+    // }
+    // if (isBooked) {
+    //   navigate("/profile");
+    //   return;
+    // }
+    // await bookingMutation.mutateAsync({
+    //   tripId: trip.id,
+    //   roomType: tripRoom,
+    //   adults: passengers,
+    // });
+    const message = encodeURIComponent(
+      `Hello! I would like to book the trip "${trip.tripName}" (${formatTripDates(trip.startDateTime, trip.endDateTime)}) for ${passengers} traveler(s) with the ${currentOption?.label} package.`,
+    );
+    window.open(`https://wa.me/7719783377?text=${message}`, "_blank");
   };
 
   return (
